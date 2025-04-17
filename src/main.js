@@ -135,8 +135,8 @@ function mouseAction() {
 
     const DOMpointer = document.getElementById("pointer")
 
-    DOMpointer.style.left = mouseBody.position[0] * SCALE + "px"
-    DOMpointer.style.top = -mouseBody.position[1] * SCALE + "px"
+    DOMpointer.style.left = mouseBody.interpolatedPosition[0] * SCALE + "px"
+    DOMpointer.style.top = -mouseBody.interpolatedPosition[1] * SCALE + "px"
 
     // if (mouseEvent.button == 2) {
     //     mouseBody.position = [mouseEvent.clientX / SCALE, mouseEvent.clientY / SCALE]
@@ -163,15 +163,27 @@ function resizeWindow() {
         // console.log(delta)
         bodies.forEach(element => {
             element.physics.wakeUp()
+
+            var rect = element.dom.getBoundingClientRect();
+
+            element.physics.shapes[0].width = rect.width / SCALE
+
+            element.physics.shapes[0].height = rect.height / SCALE
+
+            if (delta.top !== 0 || delta.left !== 0) { 
+                element.physics.applyForce([delta.top/SCALE, delta.left/SCALE], element.physics.position)
+            }
         });
     }
-    const height = window.innerHeight;
 
-    const adjustment = Math.round(-height - planeBottomBody.position[1]*SCALE)
+    const adjustmentBottom = Math.round(-window.innerHeight - planeBottomBody.position[1]*SCALE)
 
-    console.log(adjustment/SCALE)
+    const adjustmentRight = Math.round(window.innerWidth - planeRightBody.position[0]*SCALE)
+
+    // console.log(adjustment/SCALE)
     
-    planeBottomBody.velocity = [0, -Math.max(-adjustment/SCALE * 30, -20)]
+    planeBottomBody.velocity = [0, -Math.max(-adjustmentBottom/SCALE * 30, -20)]
+    planeRightBody.velocity = [Math.min(adjustmentRight/SCALE * 30, 20), 0]
 
     currentWindowSize = {
         x: window.screenLeft,

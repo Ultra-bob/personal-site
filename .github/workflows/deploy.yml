@@ -33,17 +33,17 @@ jobs:
       - uses: https://code.forgejo.org/actions/checkout@v2
         name: Checkout Files
 
-      - name: Set up Node
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
-          cache: 'npm'
-
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
+        run: pnpm install
 
       - name: Upload Build
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
