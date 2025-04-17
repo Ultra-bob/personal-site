@@ -54,6 +54,20 @@ let currentWindowSize = {
     h: window.innerHeight
 }
 
+const mouseBody = new p2.Body({
+    mass: 1,
+    position: [2, 2],
+    gravityScale: 0,
+    collisionResponse: false
+    // type: p2.Body.KINEMATIC
+})
+
+mouseBody.allowSleep = false;
+
+mouseBody.addShape(new p2.Circle({radius: 0.15, material: borderMaterial}))
+
+world.addBody(mouseBody)
+
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.
 // The World will run substeps and interpolate automatically for us, to get smooth animation.
 const fixedTimeStep = 1 / 60 // seconds
@@ -78,6 +92,8 @@ function createBody(element) {
         ],
         angle: 0
     });
+
+    body.damping = 0.2
 
     console.log(body.mass)
 
@@ -104,7 +120,37 @@ function createBody(element) {
     updateTransform(body, element);
 }
 
-function resizeWindow(event) {
+let mouseEvent = null
+let lastMouseEvent = Date.now()
+
+addEventListener("mousemove", (event) => mouseEvent = event)
+addEventListener("mouseup", (event) => mouseEvent = event)
+addEventListener("mousedown", (event) => mouseEvent = event)
+
+function mouseAction() {
+
+    if (mouseEvent === null) {
+        return
+    }
+
+    const DOMpointer = document.getElementById("pointer")
+
+    DOMpointer.style.left = mouseBody.position[0] * SCALE + "px"
+    DOMpointer.style.top = -mouseBody.position[1] * SCALE + "px"
+
+    // if (mouseEvent.button == 2) {
+    //     mouseBody.position = [mouseEvent.clientX / SCALE, mouseEvent.clientY / SCALE]
+    // }
+    DOMpointer.style.background = mouseEvent.buttons == 2 ? "grey" : "transparent"
+
+    mouseBody.collisionResponse = mouseEvent.buttons == 2;
+
+    mouseBody.velocity.set([(mouseEvent.clientX / SCALE - mouseBody.position[0]) * 30, (-mouseEvent.clientY / SCALE - mouseBody.position[1]) * 30])
+}
+
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+function resizeWindow() {
     const delta = {
         top: window.screenTop - currentWindowSize.y,
         bottom: (window.screenTop + window.innerHeight) - (currentWindowSize.y + currentWindowSize.h),
@@ -114,21 +160,18 @@ function resizeWindow(event) {
 
 
     if (Object.values(delta).some(item => item !== 0)) {
-        console.log(delta)
+        // console.log(delta)
         bodies.forEach(element => {
             element.physics.wakeUp()
         });
-
-        planeRightBody.velocity = [delta.right / SCALE, 0]
-        planeBottomBody.velocity = [0, -delta.bottom]
-    } else {
-        const height = window.innerHeight;
-
-        const adjustment = Math.round(-height - planeBottomBody.position[1]*SCALE)/SCALE
-        
-        planeBottomBody.velocity = [0, Math.max(Math.abs(Math.sign(adjustment)), Math.abs(adjustment)) * Math.sign(adjustment)]
-        // console.log(-height - planeBottomBody.position[1]*SCALE)
     }
+    const height = window.innerHeight;
+
+    const adjustment = Math.round(-height - planeBottomBody.position[1]*SCALE)
+
+    console.log(adjustment/SCALE)
+    
+    planeBottomBody.velocity = [0, -Math.max(-adjustment/SCALE * 30, -20)]
 
     currentWindowSize = {
         x: window.screenLeft,
@@ -139,7 +182,10 @@ function resizeWindow(event) {
 
 }
 
-world.on('postStep', resizeWindow)
+world.on('postStep', (event) => {
+    resizeWindow()
+    mouseAction()
+})
 
 function updateTransform(body, element) {
 
@@ -147,7 +193,7 @@ function updateTransform(body, element) {
     var x = SCALE * (body.interpolatedPosition[0] - body.shapes[0].width / 2);
     var y = -SCALE * (body.interpolatedPosition[1] + body.shapes[0].height / 2);
 
-    element.style.background = ["green", "orange", "gray"][body.sleepState]
+    // element.style.background = ["green", "orange", "gray"][body.sleepState]
 
     // Set element style
     var style = 'translate(' + x + 'px, ' + y + 'px) rotate(' + (-body.interpolatedAngle * 57.2957795) + 'deg)';
@@ -168,6 +214,10 @@ function animate(time) {
 
     // Move bodies forward in time
     world.step(fixedTimeStep, deltaTime, maxSubSteps)
+
+    // updateTransform(mouseBody, document.getElementById("pointer"))
+
+    // console.log(mouseBody.position)
 
     bodies.forEach(body => {
         updateTransform(body.physics, body.dom)
