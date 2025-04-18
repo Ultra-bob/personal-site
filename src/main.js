@@ -64,13 +64,15 @@ const mouseBody = new p2.Body({
 
 mouseBody.allowSleep = false;
 
-mouseBody.addShape(new p2.Circle({radius: 0.15, material: borderMaterial}))
+mouseBody.addShape(new p2.Circle({ radius: 0.15, material: borderMaterial }))
 
 world.addBody(mouseBody)
 
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.
 // The World will run substeps and interpolate automatically for us, to get smooth animation.
 const fixedTimeStep = 1 / 60 // seconds
+const someconstidk = 0.5/fixedTimeStep
+
 const maxSubSteps = 10 // Max sub steps to catch up with the wall clock
 
 const bodies = [];
@@ -145,7 +147,7 @@ function mouseAction() {
 
     mouseBody.collisionResponse = mouseEvent.buttons == 2;
 
-    mouseBody.velocity.set([(mouseEvent.clientX / SCALE - mouseBody.position[0]) * 30, (-mouseEvent.clientY / SCALE - mouseBody.position[1]) * 30])
+    mouseBody.velocity.set([(mouseEvent.clientX / SCALE - mouseBody.position[0]) * someconstidk, (-mouseEvent.clientY / SCALE - mouseBody.position[1]) * someconstidk])
 }
 
 document.addEventListener('contextmenu', event => event.preventDefault());
@@ -164,26 +166,26 @@ function resizeWindow() {
         bodies.forEach(element => {
             element.physics.wakeUp()
 
-            var rect = element.dom.getBoundingClientRect();
+            // var rect = element.dom.getBoundingClientRect();
 
-            element.physics.shapes[0].width = rect.width / SCALE
+            // element.physics.shapes[0].width = rect.width / SCALE
 
-            element.physics.shapes[0].height = rect.height / SCALE
+            // element.physics.shapes[0].height = rect.height / SCALE
 
-            if (delta.top !== 0 || delta.left !== 0) { 
-                element.physics.applyForce([delta.top/SCALE, delta.left/SCALE], element.physics.position)
+            if (delta.top !== 0 || delta.left !== 0) {
+                element.physics.applyForce([(delta.top / SCALE) * someconstidk, (delta.left / SCALE) * someconstidk])
             }
         });
     }
 
-    const adjustmentBottom = Math.round(-window.innerHeight - planeBottomBody.position[1]*SCALE)
+    const adjustmentBottom = Math.round(-window.innerHeight - planeBottomBody.position[1] * SCALE)
 
-    const adjustmentRight = Math.round(window.innerWidth - planeRightBody.position[0]*SCALE)
+    const adjustmentRight = Math.round(window.innerWidth - planeRightBody.position[0] * SCALE)
 
     // console.log(adjustment/SCALE)
-    
-    planeBottomBody.velocity = [0, -Math.max(-adjustmentBottom/SCALE * 30, -20)]
-    planeRightBody.velocity = [Math.min(adjustmentRight/SCALE * 30, 20), 0]
+
+    planeBottomBody.velocity = [0, -Math.max(-adjustmentBottom / SCALE * someconstidk, -20)]
+    planeRightBody.velocity = [Math.min(adjustmentRight / SCALE * someconstidk, 20), 0]
 
     currentWindowSize = {
         x: window.screenLeft,

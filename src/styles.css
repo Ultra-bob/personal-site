@@ -1,7 +1,7 @@
 .box {
     /* aspect-ratio: 1; */
     background-color: white;
-    padding: 1vw;
+    padding: 1em;
     text-align: center;
     position: absolute;
     transform-origin: 50% 50%;
