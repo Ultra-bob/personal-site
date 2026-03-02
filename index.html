@@ -1,26 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1920, initial-scale=1.0">
     <title>Physics Test</title>
 
-    <script type="module" src="src/main.js"></script>
+    <script type="module" src="src/main.ts"></script>
     <link href="src/styles.css" rel="stylesheet" />
 </head>
+
 <body>
-    <div class="box" style="left: 100px; top: 500px"><h1>my</h1></div>
+    <div class="box" style="left: 100px; top: 200px">
+        <h1 class="text-xl">Welcome to my site!</h1>
+    </div>
 
-    <div class="box" style="left: 200px; top: 500px"><h1>website</h1></div>
+    <div class="box" style="left: 100px; top: 300px">
+        Check out some of the things i've made:
+    </div>
 
-    <div class="box" style="left: 120px; top: 420px">welcome</div>
+    <div class="box link-highlight" style="left: 90px; top: 400px">
+        <a href="https://code.ultrablob.me/">My self-hosted github alternative</a>
+    </div>
 
-    <div class="box" style="left: 240px; top: 360px">to</div>
+    <div class="box" style="left: 120px; top: 500px">
+        <a class="link-highlight" href="https://ape-ame.ultrablob.me/">ape-ame</a>
+        <br>
+        A wave-survival game
+    </div>
 
-    <div class="box" style="left: 100px; top: 620px">(it's still a work in progress)</div>
+    <div class="box" style="left: 120px; top: 600px">
+        <a class="link-highlight" href="https://ultrablob.me/locksmith">locksmith</a>
+        <br>
+        a fully automatic<br>stacked cipher decoder
+    </div>
 
-    <div class="box" style="left: 330px; top: 200px"><img src="src/javascript.svg"></div>
+    <div class="box h-min" style="top: 200px; left: 600px">
+        <h1 class="text-xl">Physics</h1>
+    </div>
+
+    <div class="box h-min" style="top: 300px; left: 500px">
+        <p>Hold right click to interact with physics</p>
+    </div>
+
+    <a class="box flex gap-4" style="left: 830px; top: 200px" href="https://code.ultrablob.me/ultrablob/personal-site">
+        <p>Check out the<br><span class="link-highlight">source code</span></p>
+    </a>
+
+    <a class="box text-sm text-gray-600" href="https://p2-es.pmnd.rs/" style="left: 540px; top: 400px">
+        Powered by <span class="link-highlight"><code>p2-es</code></span>
+    </a>
+
+    <button class="box grav-inverted hover:bg-gray-100!" style="left: 100px; top: 100px;" onclick="window.location.reload()">
+        Reset<br>Simulation
+    </button>
 
     <div id="pointer"></div>
 </body>
+
 </html>

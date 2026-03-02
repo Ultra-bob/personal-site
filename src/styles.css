@@ -1,15 +1,36 @@
+@import "tailwindcss";
+
+:root {
+    overflow: hidden;
+}
+
 .box {
     /* aspect-ratio: 1; */
-    background-color: white;
+
     padding: 1em;
     text-align: center;
     position: absolute;
     transform-origin: 50% 50%;
+
+    background-color: white;
+
+    border: 2px solid rgba(0, 0, 0, 0.05);
+
+    border-radius: 5px;
+}
+
+.link-highlight {
+    color: blue;
+    text-decoration: underline;
 }
 
 body {
-    overflow: hidden;
-    background-color: aliceblue;
+    /* overflow: hidden; */
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: var(--color-blue-50);
 }
 
 #pointer {
@@ -18,7 +39,9 @@ body {
 
     position: absolute;
 
+    background-color: #9191916b;
+
     transform: translate(-50%, -50%);
-    
+
     border-radius: 100%;
 }
