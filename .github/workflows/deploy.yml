@@ -21,14 +21,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
-      - name: Build Release
-        if: env.GITHUB_EVENT_NAME == 'push'
-        run: echo "BUILD_TYPE=release" >> $GITHUB_ENV
-
-      - name: Build Debug/Beta
-        if: env.GITHUB_EVENT_NAME == 'pull_request'
-        run: echo "BUILD_TYPE=debug" >> $GITHUB_ENV
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: https://code.forgejo.org/actions/checkout@v2
         name: Checkout Files
