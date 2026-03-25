@@ -113,6 +113,7 @@ function createBody(element: HTMLElement) {
     angle: 0
   });
   body.damping = 0.5;
+  body.angularDamping = 0.6;
   body.allowSleep      = true;
   body.sleepSpeedLimit = 0.05;
   body.sleepTimeLimit  = 1;
