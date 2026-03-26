@@ -115,8 +115,8 @@ function createBody(element: HTMLElement) {
   body.damping = 0.5;
   body.angularDamping = 0.6;
   body.allowSleep      = true;
-  body.sleepSpeedLimit = 0.05;
-  body.sleepTimeLimit  = 1;
+  body.sleepSpeedLimit = 0.1;
+  body.sleepTimeLimit  = 0.25;
   if (element.classList.contains("grav-inverted")) {
     body.gravityScale = -0.5;
   }
@@ -216,8 +216,8 @@ function updateTransform(body: p2.Body, el: HTMLElement) {
 }
 
 // 9) Animation loop
-const fixedTimeStep    = 1/60;
-const maxSubSteps      = 10;
+const fixedTimeStep    = 1/30;
+const maxSubSteps      = 30;
 let lastTime           = performance.now();
 function animate(time: number) {
   requestAnimationFrame(animate);
