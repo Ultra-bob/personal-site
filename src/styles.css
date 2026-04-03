@@ -5,7 +5,7 @@
 }
 
 .box {
-    /* aspect-ratio: 1; */
+    top: -100px;
 
     padding: 1em;
     text-align: center;
