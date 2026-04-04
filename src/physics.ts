@@ -327,19 +327,15 @@ function animate(time: number) {
   wakeAllOnWindowChange();
 
   const dt = (time - lastTime) / 1000;
-  deltaDisplay.textContent = (dt * 1000).toFixed(2) + " ms";
 
-  const beforeStep = performance.now();
   world.step(fixedTimeStep, dt, maxSubSteps);
-  const afterStep = performance.now();
-  stepTimeDisplay.textContent = (afterStep - beforeStep).toFixed(2) + " ms";
 
   // Unlock audio / show pointer (still needed)
   mouseAction();
 
   // Update DOM elements
   bodies.forEach(b => updateTransform(b.physics, b.dom));
-  bodies.forEach(b => displaySleeping(b.physics, b.dom));
+  // bodies.forEach(b => displaySleeping(b.physics, b.dom));
 
   lastTime = time;
 }
