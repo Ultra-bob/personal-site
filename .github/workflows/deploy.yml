@@ -1,4 +1,4 @@
-name: CI
+name: Deploy
 
 # Controls when the action will run. 
 on:
@@ -42,12 +42,13 @@ jobs:
       - name: Build site
         run: pnpm run build
 
-      - name: Upload Build
-        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
-        id: upload-build
-        with:
-          name: Build.zip
-          path: './dist'
-          retention-days: 3
-          overwrite: true
-          compression-level: 9 # maximum compression
+        - name: Deploy with rsync
+          uses: https://github.com/burnett01/rsync-deployments@v8
+          with:
+            switches: -avzr --delete
+            path: dist/
+            remote_path: ${{ secrets.RSYNC_REMOTE_PATH }}
+            remote_host: ${{ secrets.RSYNC_REMOTE_HOST }}
+            remote_port: ${{ secrets.RSYNC_REMOTE_PORT }}
+            remote_user: ${{ secrets.RSYNC_REMOTE_USER }}
+            remote_key:  ${{ secrets.RSYNC_REMOTE_KEY  }}
