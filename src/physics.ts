@@ -6,7 +6,7 @@ import * as p2 from "p2-es";
 /* --------------------------------------------------------------
    1️⃣  Global constants
    -------------------------------------------------------------- */
-const SCALE = 50;                     // world‑units‑→‑pixels
+const SCALE = 5;                     // world‑units‑→‑pixels
 const DENSITY = 0.00001;              // area‑to‑mass ratio
 
 /* --------------------------------------------------------------
@@ -17,6 +17,9 @@ const world = new p2.World({
   broadphase: new p2.SAPBroadphase(),
 });
 world.sleepMode = p2.World.BODY_SLEEPING;
+
+// Set stiffness of all contacts and constraints
+world.setGlobalStiffness(1e8);
 
 /* --------------------------------------------------------------
    3️⃣  Materials & sound (unchanged)
@@ -34,7 +37,7 @@ world.on("beginContact", (evt) => {
   if (audioCtx.state == "suspended") return;           // need user interaction
   if (!(evt.bodyA.collisionResponse && evt.bodyB.collisionResponse)) return;
 
-  const vol = p2.vec2.distance(evt.bodyA.velocity, evt.bodyB.velocity) / 100;
+  const vol = p2.vec2.distance(evt.bodyA.velocity, evt.bodyB.velocity) / 1000;
   const src = audioCtx.createBufferSource();
   src.buffer = audioBuffer;
   const gain = audioCtx.createGain();
@@ -216,12 +219,12 @@ function createBody(element: HTMLElement) {
   body.damping = 0.5;
   body.angularDamping = 0.6;
   body.allowSleep = true;
-  body.sleepSpeedLimit = 0.1;
+  body.sleepSpeedLimit = 1;
   body.sleepTimeLimit = 0.25;
 
   if (element.classList.contains('grav-inverted')) {
     body.gravityScale = -0.5;
-    body.velocity[1] = -20;               // give it a little initial kick
+    body.velocity[1] = -150;               // give it a little initial kick
   }
 
   body.addShape(new p2.Box({ width: w, height: h, material: boxMaterial }));
