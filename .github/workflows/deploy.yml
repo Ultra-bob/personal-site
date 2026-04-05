@@ -42,13 +42,13 @@ jobs:
       - name: Build site
         run: pnpm run build
 
-        - name: Deploy with rsync
-          uses: https://github.com/burnett01/rsync-deployments@v8
-          with:
-            switches: -avzr --delete
-            path: dist/
-            remote_path: ${{ secrets.RSYNC_REMOTE_PATH }}
-            remote_host: ${{ secrets.RSYNC_REMOTE_HOST }}
-            remote_port: ${{ secrets.RSYNC_REMOTE_PORT }}
-            remote_user: ${{ secrets.RSYNC_REMOTE_USER }}
-            remote_key:  ${{ secrets.RSYNC_REMOTE_KEY  }}
+      - name: Deploy with rsync
+        uses: https://github.com/burnett01/rsync-deployments@v8
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: ${{ secrets.RSYNC_REMOTE_PATH }}
+          remote_host: ${{ secrets.RSYNC_REMOTE_HOST }}
+          remote_port: ${{ secrets.RSYNC_REMOTE_PORT }}
+          remote_user: ${{ secrets.RSYNC_REMOTE_USER }}
+          remote_key:  ${{ secrets.RSYNC_REMOTE_KEY  }}
