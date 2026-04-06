@@ -154,9 +154,6 @@ addEventListener('mousedown', e => {
     world.addConstraint(mouseConstraint);
     isMouseDown = true;
 
-    // Show custom pointer (optional)
-    const ptr = document.getElementById('pointer')!;
-    ptr.style.display = 'block';
   }
 });
 
@@ -169,10 +166,6 @@ addEventListener('mouseup', e => {
     mouseConstraint = null;
   }
   isMouseDown = false;
-
-  // Hide the custom pointer again
-  const ptr = document.getElementById('pointer')!;
-  ptr.style.display = 'none';
 });
 
 addEventListener('mousemove', e => {
@@ -305,7 +298,6 @@ function mouseAction() {
   if (audioCtx.state === "suspended") {
     audioCtx.resume();
   }
-  // No other code needed; the joint does the dragging.
 }
 
 /* --------------------------------------------------------------
