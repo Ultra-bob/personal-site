@@ -295,7 +295,7 @@ function wakeAllOnWindowChange() {
    -------------------------------------------------------------- */
 function mouseAction() {
   // The demo needs a user gesture to start audio – keep this.
-  if (audioCtx.state === "suspended") {
+  if (audioCtx.state === "suspended" && isMouseDown) {
     audioCtx.resume();
   }
 }
