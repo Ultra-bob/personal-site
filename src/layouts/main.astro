@@ -1,0 +1,28 @@
+---
+import Navbar from "../components/navbar.astro";
+import Footer from "../components/footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, initial-scale=1.0" />
+    <title>ultrablob.me</title>
+
+    <script type="module" src="src/physics.ts"></script>
+    <link href="src/styles.css" rel="stylesheet" />
+    <!-- <link href="src/reset.css" rel="stylesheet" /> -->
+    <link rel="icon" type="image/x-icon" href="/icon.svg" />
+  </head>
+
+  <body class="w-full min-h-screen">
+    <Navbar />
+
+    <section id="content" class="p-4 max-w-3xl mx-auto">
+      <slot />
+    </section>
+
+    <Footer />
+  </body>
+</html>

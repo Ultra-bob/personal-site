@@ -1,0 +1,36 @@
+---
+import "../styles/global.css";
+import Main from "../layouts/main.astro";
+import Project from "../components/project.astro";
+---
+
+<Main>
+  <h1 class="text-2xl mb-4">Welcome to my site!</h1>
+  <p>
+    While you're here, you can explore my guestbook, read my latest blog posts
+    or check out my projects.
+  </p>
+  <h2 class="text-xl mt-8 mb-4">Projects</h2>
+  <Project
+    title="Locksmith"
+    description="An automatic stacked cipher decoder, written with Rust and Leptos"
+    link="https://locksmith.ultrablob.me"
+    codeLink="https://code.ultrablob.me/ultrablob/locksmith"
+  />
+  <Project
+    title="Habit Tracker"
+    description="A full-stack habit tracker supporting measurable and enum habits"
+    codeLink="https://code.ultrablob.me/ultrablob/habit-tracker"
+  />
+  <Project
+    title="ape-ame"
+    description="A wave survival bullet hell game built with Godot"
+    link="https://ape-ame.ultrablob.me"
+    codeLink="https://code.ultrablob.me/ultrablob/ape-ame"
+  />
+  <Project
+    title="gork"
+    description="An 8-ball discord bot written in Rust with Serenity"
+    codeLink="https://code.ultrablob.me/ultrablob/gork"
+  />
+</Main>
