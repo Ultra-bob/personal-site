@@ -43,7 +43,7 @@ jobs:
         run: pnpm run build
 
       - name: Deploy with rsync
-        uses: https://github.com/burnett01/rsync-deployments@26b8d85eefac9c6976309fde0a3eee866f61ef52
+        uses: https://github.com/burnett01/rsync-deployments@v8
         with:
           switches: -avzr --delete
           path: dist/
