@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @import "./reset.css";
+@import "./theme.css";
+
+a:hover, .link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+
+  transition: color 0.2s ease-in-out;
+}
