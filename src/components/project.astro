@@ -11,12 +11,12 @@ const { title, description, link, codeLink } = Astro.props;
     <p class="text-secondary">{description}</p>
     <div class="flex-grow-1"></div>
     {link && (
-        <a href={link} class="w-6 h-6 text-secondary" aria-label="Visit project">
+        <a href={link} class="w-6 h-6 flex-shrink-0 text-secondary" aria-label="Visit project">
             <LinkExternal />
         </a>
     )}
     {codeLink && (
-        <a href={codeLink} class="w-6 h-6 text-secondary" aria-label="View source code">
+        <a href={codeLink} class="w-6 h-6 flex-shrink-0 text-secondary" aria-label="View source code">
             <Code />
         </a>
     )}
