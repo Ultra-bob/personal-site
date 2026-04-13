@@ -15,6 +15,7 @@
     "@tailwindcss/vite": "^4.1.4",
     "@types/matter-js": "^0.20.2",
     "astro": "^6.1.5",
+    "cssnano": "^7.1.5",
     "matter-js": "^0.20.0",
     "p2-es": "^1.2.3",
     "tailwindcss": "^4.1.4"

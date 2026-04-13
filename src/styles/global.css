@@ -2,6 +2,12 @@
 @import "./reset.css";
 @import "./theme.css";
 
+* {
+  transition-property: background-color, color, border-color, fill, stroke;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
 a:hover, .link:hover {
   color: var(--text-primary);
   text-decoration: underline;

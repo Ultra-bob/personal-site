@@ -7,14 +7,12 @@
     --bg-secondary: var(--color-gray-400);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --text-primary: var(--color-white);
-        --text-secondary: var(--color-gray-300);
-        --text-tertiary: var(--color-gray-500);
-        --bg-primary: var(--color-zinc-900);
-        --bg-secondary: var(--color-zinc-700);
-    }
+:root.dark {
+    --text-primary: var(--color-white);
+    --text-secondary: var(--color-gray-300);
+    --text-tertiary: var(--color-gray-500);
+    --bg-primary: var(--color-zinc-900);
+    --bg-secondary: var(--color-zinc-700);
 }
 
 .text-primary {
