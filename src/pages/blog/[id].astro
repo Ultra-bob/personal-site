@@ -23,10 +23,11 @@ const { Content } = await render(post);
     </div>
   </article>
 </Main>
+
 <script>
   import enUsPatterns from "hyphenation.en-us";
   import { createHyphenator } from "tex-linebreak";
-  import { justifyContent } from "./fast-justify";
+  import { justifyContent } from "../../lib/fast-justify";
 
   performance.mark("start-justification");
   const hyphenate = createHyphenator(enUsPatterns);
