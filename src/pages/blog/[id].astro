@@ -1,0 +1,120 @@
+---
+import { getCollection, render } from "astro:content";
+import Main from "../../layouts/main.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<style>
+  article p {
+    white-space: normal;
+  }
+
+  article p .kp-line {
+    display: block;
+  }
+</style>
+
+<Main>
+  <article class="prose mx-auto">
+    <h1 class="mb-0">{post.data.title}</h1>
+    <p class="text-sm text-secondary mt-1">
+      {new Date(post.data.pubDate).toLocaleDateString()}
+    </p>
+    <Content />
+  </article>
+</Main>
+
+<script>
+  import {
+    prepareWithSegments,
+    type PreparedTextWithSegments,
+  } from "@chenglou/pretext";
+
+  import {
+    measureBreakGlyphs,
+    layoutKnuthPlass,
+    type KnuthPlassLine,
+  } from "./linebreak";
+
+  function renderParagraphAsJustifiedLines(
+    p: HTMLParagraphElement,
+    lines: KnuthPlassLine[],
+    width: number,
+  ) {
+    p.replaceChildren();
+
+    for (const line of lines) {
+      const el = document.createElement("span");
+      el.className = "kp-line";
+      el.textContent = line.text;
+      el.style.display = "block";
+      el.style.whiteSpace = "pre";
+
+      if (!line.isLastLine && line.spaceCount > 0) {
+        const extraPerSpace = (width - line.width) / line.spaceCount;
+        el.style.wordSpacing = `${extraPerSpace}px`;
+      }
+
+      p.appendChild(el);
+    }
+  }
+
+  function justifyParagraphElement(p: HTMLParagraphElement) {
+    const source = p.dataset.kpSource ?? p.textContent ?? "";
+    p.dataset.kpSource = source;
+
+    if (!source.trim()) {
+      p.replaceChildren();
+      return;
+    }
+
+    const cs = getComputedStyle(p);
+    const font = cs.font;
+    const width = p.getBoundingClientRect().width;
+    if (width <= 0) return;
+
+    const prepared = prepareWithSegments(
+      source,
+      font,
+    ) as PreparedTextWithSegments & {
+      segments: readonly string[];
+      widths: readonly number[];
+    };
+
+    const { normalSpaceWidth, hyphenWidth } = measureBreakGlyphs(font);
+
+    const lines = layoutKnuthPlass(prepared, width, {
+      normalSpaceWidth,
+      hyphenWidth,
+    });
+
+    renderParagraphAsJustifiedLines(p, lines, width);
+  }
+
+  function justifyArticleParagraphs(article: HTMLElement) {
+    const paragraphs = article.querySelectorAll("p");
+    for (const p of paragraphs) {
+      justifyParagraphElement(p);
+    }
+  }
+
+  const article = document.querySelector("article");
+  if (article) {
+    document.fonts.ready.then(() => justifyArticleParagraphs(article));
+
+    const ro = new ResizeObserver(() => {
+      justifyArticleParagraphs(article);
+    });
+    ro.observe(article);
+  }
+</script>

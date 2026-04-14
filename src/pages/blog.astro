@@ -1,0 +1,20 @@
+---
+import Main from "../layouts/main.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+---
+
+<Main title="Blog">
+  <h1 class="text-3xl font-bold mb-6">Blog</h1>
+  <ul class="space-y-4">
+    {posts.map((post) => (
+      <li>
+        <a href={`/blog/${post.id}`} class="text-xl text-primary hover:text-(--text-primary)">
+          {post.data.title}
+        </a>
+        <p class="text-secondary">{post.data.description}</p>
+      </li>
+    ))}
+  </ul>
+</Main>
