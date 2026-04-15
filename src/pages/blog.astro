@@ -8,13 +8,54 @@ const posts = await getCollection("blog");
 <Main title="Blog">
   <h1 class="text-3xl font-bold mb-6">Blog</h1>
   <ul class="space-y-4">
-    {posts.map((post) => (
-      <li class="box">
-        <a href={`/blog/${post.id}`} class="text-xl text-primary hover:text-(--text-primary)">
-          {post.data.title}
-        </a>
-        <p class="text-secondary">{post.data.description}</p>
-      </li>
-    ))}
+    {
+      posts.map((post) => (
+        <li class="box">
+          <a
+            href={`/blog/${post.id}`}
+            class="text-xl text-primary hover:text-(--text-primary)"
+          >
+            {post.data.title}
+          </a>
+          <p class="text-secondary">{post.data.description}</p>
+        </li>
+      ))
+    }
   </ul>
 </Main>
+
+<!-- Load physics -->
+<script>
+  import { engine, Box } from "../lib/physics.ts";
+  import Matter from "matter-js";
+
+  // module aliases
+  const Engine = Matter.Engine,
+    Bodies = Matter.Bodies,
+    Composite = Matter.Composite;
+
+  const boxes: Box[] = [];
+
+  document.querySelectorAll(".box").forEach((element) => {
+    const box = new Box(element as HTMLDivElement);
+    boxes.push(box);
+    Composite.add(engine.world, box.body);
+  });
+
+  const ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+
+  Composite.add(engine.world, ground);
+
+  // Create a main loop
+  function mainLoop() {
+    // run the engine
+    Engine.update(engine, 1000 / 60);
+    requestAnimationFrame(mainLoop);
+
+    // Update the position of each box
+    boxes.forEach((box) => box.update());
+  }
+
+  // Start the main loop
+  mainLoop();
+</script>
