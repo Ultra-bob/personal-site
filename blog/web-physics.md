@@ -1,6 +1,6 @@
 ---
 title: "Physics on the web"
-description: "Going beyond Three.js personal site slop"
+description: "Something other than Three.js"
 pubDate: "2026-04-18"
 ---
 Nowadays, it seems like everyone and their intern has a personal website with some [Three.js](https://threejs.org/) powered interactive element. Not to say that those aren't cool or don't have effort put into them -- they have both in spades, but the *wow factor* they used to have has faded somewhat.
@@ -20,7 +20,7 @@ The main flow looks something like this:
 2. Create physics objects for the borders of the page
 3. Every frame:
     1. Step the physics simulation
-    2. Update the `transform` of each element based on the physics objects
+    2. Update the `transform` of each DOM element based on it's physics simulation body
 
 There are also some extra features I added for polish:
 - **Mouse interaction:** Implemented with a kinematic body that follows a mouse, and creating physics joints between it and the object being dragged.
