@@ -1,0 +1,18 @@
+<link rel="preload" href="/collide.ogg" as="fetch" crossorigin="anonymous" />
+
+<script>
+  import { init } from "@lib/physics.ts";
+
+  function start() {
+    const footer = document.querySelector("footer");
+    if (footer) footer.classList.add("kinematic-box");
+
+    init();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+</script>

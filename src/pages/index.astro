@@ -2,14 +2,12 @@
 import "@styles/global.css";
 import Main from "@layouts/main.astro";
 import Project from "@components/project.astro";
-import PhysicsURL from "@lib/physics?url"
+import PhysicsLoader from "@components/physics_loader.astro";
 ---
 
 <Main>
   <Fragment slot="head">
-    <link rel="modulepreload" href={PhysicsURL} />
-    <link rel="preload" href="/collide.ogg" as="fetch" crossorigin="anonymous" />
-    <script type="module" src={PhysicsURL}></script>
+    <PhysicsLoader />
   </Fragment>
   <h1 class="text-2xl mb-4">Welcome to my site!</h1>
   <p>
