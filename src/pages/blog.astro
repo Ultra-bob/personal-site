@@ -1,0 +1,65 @@
+---
+import Main from "../layouts/main.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+---
+
+<Main title="Blog">
+  <h1 class="text-3xl font-bold mb-6">Blog</h1>
+  <ul class="space-y-4">
+    {
+      posts.map((post) => (
+        <li class="box min-w-sm">
+          <a
+            href={`/blog/${post.id}`}
+            class="text-xl text-primary hover:text-(--text-primary)"
+          >
+            {post.data.title}
+          </a>
+          <p class="text-secondary">{post.data.description}</p>
+          <p class="text-tertiary">
+            {post.data.pubDate.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</Main>
+
+<style is:inline>
+  .box {
+    padding: 20px;
+    width: max-content;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 2px solid var(--text-secondary);
+    margin: 1px; /* Very small margin to improve visual separation */
+    user-select: none;
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+    visibility: hidden; /* Hidden until settled */
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100% !important;
+    max-width: none !important;
+    padding-top: 0 !important;
+  }
+</style>
+
+<script>
+  import { init } from "../lib/physics.ts";
+
+  const footer = document.querySelector("footer");
+  if (footer) footer.classList.add("kinematic-box");
+
+  init(); // Start the physics initialization process
+</script>

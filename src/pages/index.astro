@@ -34,3 +34,36 @@ import Project from "../components/project.astro";
     codeLink="https://code.ultrablob.me/ultrablob/gork"
   />
 </Main>
+
+<style is:inline>
+  .box {
+    padding: 20px;
+    width: max-content;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 2px solid var(--text-secondary);
+    margin: 1px; /* Very small margin to improve visual separation */
+    user-select: none;
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+    visibility: hidden; /* Hidden until settled */
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100% !important;
+    max-width: none !important;
+    padding-top: 0 !important;
+  }
+</style>
+
+<script>
+  import { init } from "../lib/physics.ts";
+
+  const footer = document.querySelector("footer");
+  if (footer) footer.classList.add("kinematic-box");
+
+  init(); // Start the physics initialization process
+</script>
