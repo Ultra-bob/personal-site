@@ -1,27 +1,16 @@
 name: Deploy
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:  
-  # This workflow contains a single job called "build"
+jobs:
   build:
-    # The type of runner that the job will run on
     runs-on: docker
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: https://code.forgejo.org/actions/checkout@v2
         name: Checkout Files
 
@@ -38,11 +27,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build site
         run: pnpm run build
 
       - name: Deploy with rsync
+        if: github.event_name != 'pull_request'
         uses: https://github.com/burnett01/rsync-deployments@v8
         with:
           switches: -avzr --delete
@@ -51,4 +41,4 @@ jobs:
           remote_host: ${{ secrets.RSYNC_REMOTE_HOST }}
           remote_port: ${{ secrets.RSYNC_REMOTE_PORT }}
           remote_user: ${{ secrets.RSYNC_REMOTE_USER }}
-          remote_key:  ${{ secrets.RSYNC_REMOTE_KEY  }}
+          remote_key: ${{ secrets.RSYNC_REMOTE_KEY }}
