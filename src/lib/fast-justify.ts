@@ -2,8 +2,7 @@
 // canvas-based text measurement instead of DOM measurement.
 // Eliminates per-word layout reflows (the main bottleneck).
 
-import pkg from 'tex-linebreak';
-const { breakLines, MaxAdjustmentExceededError, forcedBreak } = pkg;
+import { breakLines, MaxAdjustmentExceededError, forcedBreak } from 'tex-linebreak';
 
 // ─── Types ───────────────────────────────────────────────────────────────
 

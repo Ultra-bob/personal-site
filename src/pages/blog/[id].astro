@@ -11,14 +11,20 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 ---
-<style></style>
+
 <Main>
-  <article class="prose mx-auto">
-    <h1 class="mb-0">{post.data.title}</h1>
-    <p class="text-sm text-secondary mt-1">
-      {new Date(post.data.pubDate).toLocaleDateString()}
+  <article class="prose prose-zinc dark:prose-invert mx-auto prose-code:before:content-none prose-code:after:content-none">
+    <h1 class="mb-4">{post.data.title}</h1>
+    <p class="text-sm text-secondary">
+      {
+        new Date(post.data.pubDate).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
     </p>
-    <div id="blog-content" class="text-justify">
+    <div id="blog-content" class="text-justify text-pretty">
       <Content />
     </div>
   </article>
@@ -37,8 +43,16 @@ const { Content } = await render(post);
   const content = document.getElementById("blog-content")!;
   content.classList.remove("text-justify");
   performance.mark("end-justification");
-  performance.measure("justification", "start-justification", "end-justification");
-  console.log("Justification time: " +performance.getEntriesByName("justification")[0].duration.toFixed(2) + "ms");
+  performance.measure(
+    "justification",
+    "start-justification",
+    "end-justification",
+  );
+  console.log(
+    "Justification time: " +
+      performance.getEntriesByName("justification")[0].duration.toFixed(2) +
+      "ms",
+  );
 
   let lastWidth = 0;
   const observer = new ResizeObserver((entries) => {

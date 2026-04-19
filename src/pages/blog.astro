@@ -18,7 +18,13 @@ const posts = await getCollection("blog");
             {post.data.title}
           </a>
           <p class="text-secondary">{post.data.description}</p>
-          <p class="text-tertiary">{post.data.pubDate.toLocaleDateString()}</p>
+          <p class="text-tertiary">
+            {post.data.pubDate.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
         </li>
       ))
     }
