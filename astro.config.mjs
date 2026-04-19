@@ -4,6 +4,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  site: "https://ultrablob.me",
   vite: {
     plugins: [visualizer({
       emitFile: true,
