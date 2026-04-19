@@ -1,12 +1,18 @@
 ---
 import Main from "../layouts/main.astro";
 import { getCollection } from "astro:content";
+import IconRSS from "../assets/rss.svg"
 
 const posts = await getCollection("blog");
 ---
 
 <Main title="Blog">
-  <h1 class="text-3xl font-bold mb-6">Blog</h1>
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold">Blog</h1>
+    <a href="/rss.xml" class="shrink-0 text-secondary">
+      <IconRSS />
+    </a>
+  </div>
   <ul class="space-y-4">
     {
       posts.map((post) => (
@@ -37,7 +43,7 @@ const posts = await getCollection("blog");
     width: max-content;
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    border: 2px solid var(--text-secondary);
+    border: 2px solid var(--text-tertiary);
     margin: 1px; /* Very small margin to improve visual separation */
     user-select: none;
     cursor: grab;

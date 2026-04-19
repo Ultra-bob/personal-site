@@ -12,6 +12,8 @@ export async function getStaticPaths() {
 }
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+const canonicalUrl = `https://ultrablob.me/blog/${post.id}`;
 ---
 
 <!doctype html>
@@ -19,33 +21,72 @@ const { Content } = await render(post);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ultrablob.me</title>
-    <link rel="icon" type="image/x-icon" href="/icon.svg" />
+    <meta name="color-scheme" content="dark light" />
+
+    <title>{post.data.title} | ultrablob.me</title>
+    <meta name="description" content={post.data.description} />
+    <meta name="author" content="Your Name" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="ultrablob.me RSS"
+      href="/rss.xml"
+    />
+
+    <meta name="theme-color" content="#111111" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={post.data.title} />
+    <meta property="og:description" content={post.data.description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="ultrablob.me" />
+    <!-- <meta property="og:image" content={ogImageUrl} /> -->
+    <meta
+      property="article:published_time"
+      content={new Date(post.data.pubDate).toISOString()}
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={post.data.title} />
+    <meta name="twitter:description" content={post.data.description} />
+    <!-- <meta name="twitter:image" content={ogImageUrl} /> -->
   </head>
-
   <body class="w-full min-h-screen bg-primary">
+    <a href="#content" class="sr-only focus:not-sr-only">Skip to content</a>
     <Navbar />
-
     <main id="content" class="p-4 max-w-3xl mx-auto">
       <article
+        aria-labelledby="post-title"
         class="prose prose-zinc dark:prose-invert mx-auto prose-code:before:content-none prose-code:after:content-none"
       >
-        <h1 class="mb-4">{post.data.title}</h1>
-        <p class="text-sm text-secondary">
-          {
-            new Date(post.data.pubDate).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
-          }
-        </p>
+        <header>
+          <h1 id="post-title" class="mb-4">{post.data.title}</h1>
+          <time
+            datetime={new Date(post.data.pubDate).toISOString()}
+            class="text-sm text-secondary"
+          >
+            {
+              new Date(post.data.pubDate).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            }
+          </time>
+        </header>
+
         <div id="blog-content" class="text-justify text-pretty">
           <Content />
         </div>
       </article>
     </main>
-
     <Footer />
   </body>
 </html>

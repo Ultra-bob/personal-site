@@ -2,6 +2,12 @@
 import "../styles/global.css";
 import Navbar from "../components/navbar.astro";
 import Footer from "../components/footer.astro";
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
 ---
 
 <!doctype html>
@@ -9,7 +15,7 @@ import Footer from "../components/footer.astro";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ultrablob.me</title>
+    <title>{title ? `${title} | ` : ""} ultrablob.me</title>
     <link rel="icon" type="image/x-icon" href="/icon.svg" />
   </head>
 
