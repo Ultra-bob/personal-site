@@ -39,6 +39,10 @@ import IconMoon from "../assets/moon.svg";
   };
 
   toggle?.addEventListener("click", () => {
+    document.documentElement.classList.add("theme-transition");
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 500);
     const isDark = document.documentElement.classList.toggle("dark");
     localStorage.setItem("theme", isDark ? "dark" : "light");
     updateIcon();

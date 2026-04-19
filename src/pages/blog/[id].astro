@@ -1,0 +1,66 @@
+---
+import { getCollection, render } from "astro:content";
+import Main from "../../layouts/main.astro";
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Main>
+  <article class="prose prose-zinc dark:prose-invert mx-auto prose-code:before:content-none prose-code:after:content-none">
+    <h1 class="mb-4">{post.data.title}</h1>
+    <p class="text-sm text-secondary">
+      {
+        new Date(post.data.pubDate).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
+    </p>
+    <div id="blog-content" class="text-justify text-pretty">
+      <Content />
+    </div>
+  </article>
+</Main>
+
+<script>
+  import enUsPatterns from "hyphenation.en-us";
+  import { createHyphenator } from "tex-linebreak";
+  import { justifyContent } from "../../lib/fast-justify";
+
+  performance.mark("start-justification");
+  const hyphenate = createHyphenator(enUsPatterns);
+  const article = document.querySelector("article")!;
+  const paragraphs = Array.from(article.querySelectorAll("p"));
+  justifyContent(paragraphs, hyphenate);
+  const content = document.getElementById("blog-content")!;
+  content.classList.remove("text-justify");
+  performance.mark("end-justification");
+  performance.measure(
+    "justification",
+    "start-justification",
+    "end-justification",
+  );
+  console.log(
+    "Justification time: " +
+      performance.getEntriesByName("justification")[0].duration.toFixed(2) +
+      "ms",
+  );
+
+  let lastWidth = 0;
+  const observer = new ResizeObserver((entries) => {
+    const newWidth = entries[0].contentRect.width;
+    if (newWidth !== lastWidth) {
+      lastWidth = newWidth;
+      justifyContent(paragraphs, hyphenate);
+    }
+  });
+  observer.observe(article);
+</script>

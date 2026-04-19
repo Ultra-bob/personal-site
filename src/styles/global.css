@@ -1,8 +1,9 @@
 @import "tailwindcss";
 @import "./reset.css";
 @import "./theme.css";
+@plugin "@tailwindcss/typography";
 
-* {
+html.theme-transition > * {
   transition-property: background-color, color, border-color, fill, stroke;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;

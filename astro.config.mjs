@@ -1,8 +1,14 @@
 import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
-// https://astro.build/config
+import { visualizer } from "rollup-plugin-visualizer";
+
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [visualizer({
+      emitFile: true,
+      filename: "stats.html",
+      template: "sunburst",
+    }), tailwindcss()]
   }
 });
