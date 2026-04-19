@@ -1,7 +1,7 @@
 ---
-import Main from "../layouts/main.astro";
+import Main from "@layouts/main.astro";
 import { getCollection } from "astro:content";
-import IconRSS from "../assets/rss.svg"
+import IconRSS from "@assets/rss.svg"
 
 const posts = await getCollection("blog");
 ---
@@ -67,7 +67,7 @@ const posts = await getCollection("blog");
 </style>
 
 <script>
-  import { init } from "../lib/physics.ts";
+  import { init } from "@lib/physics.ts";
 
   const footer = document.querySelector("footer");
   if (footer) footer.classList.add("kinematic-box");

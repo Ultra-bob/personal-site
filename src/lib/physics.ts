@@ -518,3 +518,8 @@ export function destroy() {
     mouseConstraint = null;
   }
 }
+
+const footer = document.querySelector("footer");
+if (footer) footer.classList.add("kinematic-box");
+debugger;
+init(); // Start the physics initialization process
