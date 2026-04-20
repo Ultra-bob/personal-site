@@ -1,10 +1,14 @@
 ---
-import "../styles/global.css";
-import Main from "../layouts/main.astro";
-import Project from "../components/project.astro";
+import "@styles/global.css";
+import Main from "@layouts/main.astro";
+import Project from "@components/project.astro";
+import PhysicsLoader from "@components/physics_loader.astro";
 ---
 
 <Main>
+  <Fragment slot="head">
+    <PhysicsLoader />
+  </Fragment>
   <h1 class="text-2xl mb-4">Welcome to my site!</h1>
   <p>
     While you're here, you can explore my guestbook, read my latest blog posts
@@ -58,12 +62,3 @@ import Project from "../components/project.astro";
     padding-top: 0 !important;
   }
 </style>
-
-<script>
-  import { init } from "../lib/physics.ts";
-
-  const footer = document.querySelector("footer");
-  if (footer) footer.classList.add("kinematic-box");
-
-  init(); // Start the physics initialization process
-</script>

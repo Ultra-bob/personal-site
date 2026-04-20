@@ -1,12 +1,16 @@
 ---
-import Main from "../layouts/main.astro";
+import Main from "@layouts/main.astro";
 import { getCollection } from "astro:content";
-import IconRSS from "../assets/rss.svg"
+import IconRSS from "@assets/rss.svg";
+import PhysicsLoader from "@components/physics_loader.astro";
 
 const posts = await getCollection("blog");
 ---
 
 <Main title="Blog">
+  <Fragment slot="head">
+    <PhysicsLoader />
+  </Fragment>
   <div class="flex justify-between items-center">
     <h1 class="text-3xl font-bold">Blog</h1>
     <a href="/rss.xml" class="shrink-0 text-secondary">
@@ -65,12 +69,3 @@ const posts = await getCollection("blog");
     margin-inline: auto;
   }
 </style>
-
-<script>
-  import { init } from "../lib/physics.ts";
-
-  const footer = document.querySelector("footer");
-  if (footer) footer.classList.add("kinematic-box");
-
-  init(); // Start the physics initialization process
-</script>

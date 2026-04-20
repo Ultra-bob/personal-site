@@ -1,9 +1,15 @@
 {
+  "extends": "astro/tsconfigs/base",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
-    "target": "es2017",
-    "module": "esnext",
-    "moduleResolution": "bundler"
-  },
-  "include": ["src/**/*", ".astro/types.d.ts"],
-  "exclude": ["node_modules", "dist"]
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@styles/*": ["./src/styles/*"],
+    }
+  }
 }
