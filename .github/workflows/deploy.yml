@@ -32,7 +32,7 @@ jobs:
         run: pnpm run build
 
       - name: Compress Files
-        uses: stefh/ghaction-CompressFiles@v2
+        uses: https://github.com/stefh/ghaction-CompressFiles@v2
         with:
           path: dist/
           extensions: '.js,.css,.html'
