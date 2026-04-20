@@ -31,6 +31,13 @@ jobs:
       - name: Build site
         run: pnpm run build
 
+      - name: Compress Files
+        uses: stefh/ghaction-CompressFiles@v2
+        with:
+          path: dist/
+          extensions: '.js,.css,.html'
+          tools: 'brotli,gzip'
+
       - name: Deploy with rsync
         if: github.event_name != 'pull_request'
         uses: https://github.com/burnett01/rsync-deployments@v8
