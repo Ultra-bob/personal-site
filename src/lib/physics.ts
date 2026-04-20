@@ -204,12 +204,8 @@ function getLocalPoint(
   return local;
 }
 
-function onMouseDown(event: MouseEvent) {
-  if (event.button !== 0) return;
-
-  void audioCtx.resume();
-
-  const worldPos = mouseToWorld(event.clientX, event.clientY);
+function grabBody(clientX: number, clientY: number): boolean {
+  const worldPos = mouseToWorld(clientX, clientY);
   mouseBody.position[0] = worldPos[0];
   mouseBody.position[1] = worldPos[1];
 
@@ -219,7 +215,7 @@ function onMouseDown(event: MouseEvent) {
   );
 
   const targetBody = hitBodies.find((body) => body.type === p2.Body.DYNAMIC);
-  if (!targetBody) return;
+  if (!targetBody) return false;
 
   const targetBinding = dynamicBodies.find(({ body }) => body === targetBody);
   if (targetBinding) {
@@ -237,11 +233,10 @@ function onMouseDown(event: MouseEvent) {
 
   targetBody.wakeUp();
   world.addConstraint(mouseConstraint);
+  return true;
 }
 
-function onMouseUp(event: MouseEvent) {
-  if (event.button !== 0) return;
-
+function releaseBody() {
   if (grabbedElement) {
     grabbedElement.style.cursor = "";
     grabbedElement = null;
@@ -255,10 +250,65 @@ function onMouseUp(event: MouseEvent) {
   mouseConstraint = null;
 }
 
-function onMouseMove(event: MouseEvent) {
-  const [x, y] = mouseToWorld(event.clientX, event.clientY);
+function movePointer(clientX: number, clientY: number) {
+  const [x, y] = mouseToWorld(clientX, clientY);
   mouseBody.position[0] = x;
   mouseBody.position[1] = y;
+}
+
+function onMouseDown(event: MouseEvent) {
+  if (event.button !== 0) return;
+  void audioCtx.resume();
+  grabBody(event.clientX, event.clientY);
+}
+
+function onMouseUp(_event: MouseEvent) {
+  releaseBody();
+}
+
+function onMouseMove(event: MouseEvent) {
+  movePointer(event.clientX, event.clientY);
+}
+
+const DRAG_THRESHOLD = 10;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchDragging = false;
+
+function onTouchStart(event: TouchEvent) {
+  const touch = event.touches[0];
+  if (!touch) return;
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  touchDragging = false;
+  void audioCtx.resume();
+  movePointer(touch.clientX, touch.clientY);
+}
+
+function onTouchEnd(_event: TouchEvent) {
+  if (touchDragging) {
+    releaseBody();
+  }
+  touchDragging = false;
+}
+
+function onTouchMove(event: TouchEvent) {
+  const touch = event.touches[0];
+  if (!touch) return;
+  movePointer(touch.clientX, touch.clientY);
+
+  if (!touchDragging) {
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    if (dx * dx + dy * dy < DRAG_THRESHOLD * DRAG_THRESHOLD) return;
+    if (grabBody(touchStartX, touchStartY)) {
+      touchDragging = true;
+      event.preventDefault();
+    }
+    return;
+  }
+
+  event.preventDefault();
 }
 
 // -----------------------------------------------------------------------------
@@ -472,12 +522,18 @@ function addEventListeners() {
   addEventListener("mousedown", onMouseDown);
   addEventListener("mouseup", onMouseUp);
   addEventListener("mousemove", onMouseMove);
+  addEventListener("touchstart", onTouchStart, { passive: false });
+  addEventListener("touchend", onTouchEnd);
+  addEventListener("touchmove", onTouchMove, { passive: false });
 }
 
 function removeEventListeners() {
   removeEventListener("mousedown", onMouseDown);
   removeEventListener("mouseup", onMouseUp);
   removeEventListener("mousemove", onMouseMove);
+  removeEventListener("touchstart", onTouchStart);
+  removeEventListener("touchend", onTouchEnd);
+  removeEventListener("touchmove", onTouchMove);
 }
 
 export function init() {

@@ -20,7 +20,7 @@ const posts = await getCollection("blog");
   <ul class="space-y-4">
     {
       posts.map((post) => (
-        <li class="box min-w-sm">
+        <li class="box min-w-xs md:min-w-sm">
           <a
             href={`/blog/${post.id}`}
             class="text-xl text-primary hover:text-(--text-primary)"
@@ -54,18 +54,5 @@ const posts = await getCollection("blog");
     touch-action: none;
     will-change: transform;
     visibility: hidden; /* Hidden until settled */
-  }
-
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 100% !important;
-    max-width: none !important;
-    padding-top: 0 !important;
-  }
-
-  footer > div {
-    max-width: var(--container-3xl);
-    margin-inline: auto;
   }
 </style>
