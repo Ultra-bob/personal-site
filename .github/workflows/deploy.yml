@@ -39,7 +39,7 @@ jobs:
           tools: 'brotli,gzip'
 
       - name: Deploy with rsync
-        if: github.event_name != 'pull_request' && github.ref_name == "main"
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: https://github.com/burnett01/rsync-deployments@v8
         with:
           switches: -avzr --delete
