@@ -50,7 +50,7 @@ const borderMaterial = new p2.Material();
 const boxMaterial = new p2.Material();
 
 world.addContactMaterial(
-  new p2.ContactMaterial(borderMaterial, boxMaterial, { friction: 0.9 }),
+  new p2.ContactMaterial(borderMaterial, boxMaterial, { friction: 0.2 }),
 );
 
 world.addContactMaterial(
