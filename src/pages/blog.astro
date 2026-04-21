@@ -43,7 +43,7 @@ const posts = await getCollection("blog");
 
 <style is:inline>
   .box {
-    padding: 20px;
+    padding: 1rem;
     width: max-content;
     background-color: var(--bg-primary);
     color: var(--text-primary);
@@ -54,5 +54,9 @@ const posts = await getCollection("blog");
     touch-action: none;
     will-change: transform;
     visibility: hidden; /* Hidden until settled */
+  }
+
+  footer {
+    padding-top: 1px !important;
   }
 </style>
