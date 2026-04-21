@@ -1,5 +1,4 @@
 ---
-import "@styles/global.css";
 import Main from "@layouts/main.astro";
 import Project from "@components/project.astro";
 import PhysicsLoader from "@components/physics_loader.astro";
@@ -9,12 +8,12 @@ import PhysicsLoader from "@components/physics_loader.astro";
   <Fragment slot="head">
     <PhysicsLoader />
   </Fragment>
-  <h1 class="text-2xl mb-4">Welcome to my site!</h1>
-  <p>
+  <h1 class="text-2xl mb-4 max-sm:text-xl">Welcome to my site!</h1>
+  <p class="max-sm:text-sm">
     While you're here, you can explore my guestbook, read my latest blog posts
     or check out my projects.
   </p>
-  <h2 class="text-xl mt-8 mb-4">Projects</h2>
+  <h2 class="text-xl mt-8 mb-4 max-sm:text-lg max-sm:mt-4">Projects</h2>
   <Project
     title="Locksmith"
     description="An automatic stacked cipher decoder, written with Rust and Leptos"
@@ -41,8 +40,7 @@ import PhysicsLoader from "@components/physics_loader.astro";
 
 <style is:inline>
   .box {
-    padding: 20px;
-    width: max-content;
+    padding: 0.75rem;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     border: 2px solid var(--text-secondary);
@@ -55,10 +53,6 @@ import PhysicsLoader from "@components/physics_loader.astro";
   }
 
   footer {
-    position: fixed;
-    bottom: 0;
-    width: 100% !important;
-    max-width: none !important;
-    padding-top: 0 !important;
+    padding-top: 1px !important;
   }
 </style>

@@ -1,8 +1,6 @@
 ---
+import Main from "@layouts/main.astro";
 import { getCollection, render } from "astro:content";
-import "@styles/global.css";
-import Navbar from "@components/navbar.astro";
-import Footer from "@components/footer.astro";
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
   return posts.map((post) => ({
@@ -16,14 +14,8 @@ const { Content } = await render(post);
 const canonicalUrl = `https://ultrablob.me/blog/${post.id}`;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark light" />
-
-    <title>{post.data.title} | ultrablob.me</title>
+<Main title={post.data.title}>
+  <Fragment slot="head">
     <meta name="description" content={post.data.description} />
     <meta name="author" content="Your Name" />
     <link rel="canonical" href={canonicalUrl} />
@@ -57,39 +49,33 @@ const canonicalUrl = `https://ultrablob.me/blog/${post.id}`;
     <meta name="twitter:title" content={post.data.title} />
     <meta name="twitter:description" content={post.data.description} />
     <!-- <meta name="twitter:image" content={ogImageUrl} /> -->
-  </head>
-  <body class="w-full min-h-screen bg-primary">
-    <a href="#content" class="sr-only focus:not-sr-only">Skip to content</a>
-    <Navbar />
-    <main id="content" class="p-4 max-w-3xl mx-auto">
-      <article
-        aria-labelledby="post-title"
-        class="prose prose-zinc dark:prose-invert mx-auto prose-code:before:content-none prose-code:after:content-none"
-      >
-        <header>
-          <h1 id="post-title" class="mb-4">{post.data.title}</h1>
-          <time
-            datetime={new Date(post.data.pubDate).toISOString()}
-            class="text-sm text-secondary"
-          >
-            {
-              new Date(post.data.pubDate).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
-            }
-          </time>
-        </header>
+  </Fragment>
 
-        <div id="blog-content" class="text-justify text-pretty">
-          <Content />
-        </div>
-      </article>
-    </main>
-    <Footer />
-  </body>
-</html>
+  <article
+    aria-labelledby="post-title"
+    class="prose prose-zinc dark:prose-invert mx-auto prose-code:before:content-none prose-code:after:content-none"
+  >
+    <header>
+      <h1 id="post-title" class="mb-4">{post.data.title}</h1>
+      <time
+        datetime={new Date(post.data.pubDate).toISOString()}
+        class="text-sm text-secondary"
+      >
+        {
+          new Date(post.data.pubDate).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
+      </time>
+    </header>
+
+    <div id="blog-content" class="text-justify text-pretty">
+      <Content />
+    </div>
+  </article>
+</Main>
 
 <script>
   import enUsPatterns from "hyphenation.en-us";

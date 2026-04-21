@@ -5,9 +5,9 @@ import Code from "@assets/source-code.svg";
 const { title, description, link, codeLink } = Astro.props;
 ---
 
-<div class="flex flex-col items-start justify-between gap-4 mb-4 box max-w-sm">
+<div class="flex flex-col items-start justify-between gap-4 mb-4 box max-w-sm max-sm:w-xs max-sm:gap-2">
     <div class="flex flex-row justify-between items-center gap-4 w-full">
-        <h3 class="font-medium">{title}</h3>
+        <h3 class="font-medium max-sm:text-base">{title}</h3>
         <div class="grow"></div>
         {link && (
             <a href={link} class="w-6 h-6 shrink-0 text-secondary" aria-label="Visit project">
@@ -20,5 +20,5 @@ const { title, description, link, codeLink } = Astro.props;
             </a>
         )}
     </div>
-    <p class="text-secondary text-balance">{description}</p>
+    <p class="text-secondary text-balance max-sm:text-sm">{description}</p>
 </div>
