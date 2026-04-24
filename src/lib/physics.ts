@@ -17,7 +17,7 @@ type ViewportState = {
 // -----------------------------------------------------------------------------
 
 const SCALE = 5;
-const DENSITY = 0.00001;
+const DENSITY = 0.00001; 
 const MOUSE_MAX_FORCE = 1e4;
 
 const FIXED_TIME_STEP = 1 / 60;
@@ -232,6 +232,7 @@ function grabBody(clientX: number, clientY: number): boolean {
   });
 
   targetBody.wakeUp();
+  targetBody.allowSleep = false;
   world.addConstraint(mouseConstraint);
   return true;
 }
@@ -246,6 +247,7 @@ function releaseBody() {
   if (!mouseConstraint) return;
 
   mouseConstraint.bodyB.wakeUp();
+  mouseConstraint.bodyB.allowSleep = true;
   world.removeConstraint(mouseConstraint);
   mouseConstraint = null;
 }
@@ -443,6 +445,11 @@ function updateTransform(body: p2.Body, el: HTMLElement) {
   const transform = `translate(${x}px, ${y}px) rotate(${angleDeg}deg)`;
 
   el.style.transform = transform;
+  // el.style.borderStyle = [
+  //   "solid",
+  //   "dashed",
+  //   "dotted"
+  // ][body.sleepState]
   el.style.webkitTransform = `${transform} translateZ(0)`;
 }
 
