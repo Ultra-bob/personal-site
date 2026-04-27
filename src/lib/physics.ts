@@ -442,9 +442,8 @@ function updateTransform(body: p2.Body, el: HTMLElement) {
 
   const x = viewportX * SCALE - (shape.width * SCALE) / 2;
   const y = -viewportY * SCALE - (shape.height * SCALE) / 2;
-  const angleDeg = (-body.interpolatedAngle * 180) / Math.PI;
 
-  const transform = `translate(${x}px, ${y}px) rotate(${angleDeg}deg)`;
+  const transform = `translate(${x}px, ${y}px) rotate(${-body.interpolatedAngle}rad)`;
 
   el.style.transform = transform;
   // el.style.borderStyle = [
