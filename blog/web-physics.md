@@ -40,10 +40,10 @@ I'm reasonably happy with how it ended up turning out, especially on the blog in
 
 In terms of performance, the CPU cost is surprisingly minimal with good optimizations (some of which I probably missed). On Chrome's low-tier mobile chip throttling, the simulation settles just under a second after the page load, and in ~200ms on mid-tier mobile. With no throttling, it is basically instant on my desktop PC.
 
-*Update: with better optimizations, the simulation now loads in 100ms on low-tier mobile and 40ms on mid-tier mobile.*
+_Update: with better optimizations, the simulation now loads in 100ms on low-tier mobile and 40ms on mid-tier mobile._
 
 The network impact is more of a mixed bag. It pains me that 80% of my bundle size is the physics simulation, and that it blocks most of the content on my homepage. However, even on Chrome's "Slow 4G" network throttling, the page fully loads in ~2 seconds, and it loads in ~0.5s on "Fast 4G". This probably could be improved by reducing the network request chain length.
 
-*Update: By reducing network waterfall, the page fully loads in ~1.5s on "Slow 4G", but about the same on "Fast 4G".*
+_Update: By reducing network waterfall, the page fully loads in ~1.5s on "Slow 4G", but about the same on "Fast 4G"._
 
 Overall, I think the performance hit is acceptable for the benefits it brings to the site, and should be reducible with future optimization work.
