@@ -2,16 +2,14 @@
 title: Physics on the web
 description: Something other than Three.js
 pubDate: 2026-04-18
-updatedDate: 2026-04-21
+updatedDate: 2026-05-07
 ---
-
-Nowadays, it seems like everyone and their intern has a personal website with some [Three.js](https://threejs.org/) powered interactive element. I wanted to go in a different direction
 
 ## Inspiration
 
 When creating my personal site, I was thinking about how to make it different from every other personal website. I playing [Space Engineers 2](https://2.spaceengineersgame.com/) at the time, mainly downloading pre-designed ships from the Steam Workshop, and destroying them in new and interesting ways. Like any kid playing Minecraft in creative mode, the first thing most people gravitate towards in creative sandboxes is creating chaos from order.
 
-To channel that, and add some interactivity to my site, I decided to add a physics simulation to some page elements. This would allow visitors to toss them around like toy blocks, destroying the carefully created layout. The more creatively inclined could also re-stack the blocks in any way they desired. Even though most users probably wouldn't stay here long, I hoped to create a _"wait, you can do that?!"_ moment, just like Three.js used to.
+To channel that, and add some interactivity to my site, I decided to add a physics simulation to some page elements. This would allow visitors to toss them around like toy blocks, destroying the carefully created layout. The more creatively inclined could also re-stack the blocks in any way they desired. Even though most users probably wouldn't stay here long, I hoped to create a _"wait, you can do that?!"_ moment.
 
 ## Implementation
 
@@ -42,6 +40,10 @@ I'm reasonably happy with how it ended up turning out, especially on the blog in
 
 In terms of performance, the CPU cost is surprisingly minimal with good optimizations (some of which I probably missed). On Chrome's low-tier mobile chip throttling, the simulation settles just under a second after the page load, and in ~200ms on mid-tier mobile. With no throttling, it is basically instant on my desktop PC.
 
+*Update: with better optimizations, the simulation now loads in 100ms on low-tier mobile and 40ms on mid-tier mobile.*
+
 The network impact is more of a mixed bag. It pains me that 80% of my bundle size is the physics simulation, and that it blocks most of the content on my homepage. However, even on Chrome's "Slow 4G" network throttling, the page fully loads in ~2 seconds, and it loads in ~0.5s on "Fast 4G". This probably could be improved by reducing the network request chain length.
+
+*Update: By reducing network waterfall, the page fully loads in ~1.5s on "Slow 4G", but about the same on "Fast 4G".*
 
 Overall, I think the performance hit is acceptable for the benefits it brings to the site, and should be reducible with future optimization work.
