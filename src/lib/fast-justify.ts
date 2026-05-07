@@ -2,15 +2,32 @@
 // canvas-based text measurement instead of DOM measurement.
 // Eliminates per-word layout reflows (the main bottleneck).
 
-import { breakLines, MaxAdjustmentExceededError, forcedBreak } from 'tex-linebreak';
+import { breakLines, MaxAdjustmentExceededError, forcedBreak } from "tex-linebreak";
 
 // ─── Types ───────────────────────────────────────────────────────────────
 
-interface Box { type: "box"; width: number }
-interface Glue { type: "glue"; width: number; shrink: number; stretch: number }
-interface Penalty { type: "penalty"; width: number; cost: number; flagged: boolean }
+interface Box {
+  type: "box";
+  width: number;
+}
+interface Glue {
+  type: "glue";
+  width: number;
+  shrink: number;
+  stretch: number;
+}
+interface Penalty {
+  type: "penalty";
+  width: number;
+  cost: number;
+  flagged: boolean;
+}
 
-interface NodeOffset { node: Node; start: number; end: number }
+interface NodeOffset {
+  node: Node;
+  start: number;
+  end: number;
+}
 type DOMBox = Box & NodeOffset;
 type DOMGlue = Glue & NodeOffset;
 type DOMPenalty = Penalty & NodeOffset;
@@ -126,8 +143,13 @@ function addItemsForTextNode(
   for (const w of chunks) {
     if (/\s/.test(w.charAt(0))) {
       items.push({
-        type: "glue", width: spaceWidth, shrink, stretch: spaceWidth,
-        node, start: textOffset, end: textOffset + w.length,
+        type: "glue",
+        width: spaceWidth,
+        shrink,
+        stretch: spaceWidth,
+        node,
+        start: textOffset,
+        end: textOffset + w.length,
       });
       textOffset += w.length;
       continue;
@@ -138,21 +160,32 @@ function addItemsForTextNode(
       for (let i = 0; i < syllables.length; i++) {
         const c = syllables[i];
         items.push({
-          type: "box", width: measureFn(el, c),
-          node, start: textOffset, end: textOffset + c.length,
+          type: "box",
+          width: measureFn(el, c),
+          node,
+          start: textOffset,
+          end: textOffset + c.length,
         });
         textOffset += c.length;
         if (i < syllables.length - 1) {
           items.push({
-            type: "penalty", width: hyphenWidth, cost: 10, flagged: true,
-            node, start: textOffset, end: textOffset,
+            type: "penalty",
+            width: hyphenWidth,
+            cost: 10,
+            flagged: true,
+            node,
+            start: textOffset,
+            end: textOffset,
           });
         }
       }
     } else {
       items.push({
-        type: "box", width: measureFn(el, w),
-        node, start: textOffset, end: textOffset + w.length,
+        type: "box",
+        width: measureFn(el, w),
+        node,
+        start: textOffset,
+        end: textOffset + w.length,
       });
       textOffset += w.length;
     }
@@ -166,8 +199,14 @@ function addItemsForElement(
   hyphenateFn?: (word: string) => string[],
 ) {
   const {
-    display, width, paddingLeft, paddingRight,
-    marginLeft, marginRight, borderLeftWidth, borderRightWidth,
+    display,
+    width,
+    paddingLeft,
+    paddingRight,
+    marginLeft,
+    marginRight,
+    borderLeftWidth,
+    borderRightWidth,
   } = getComputedStyle(element);
 
   if (display === "inline") {

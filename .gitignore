@@ -25,3 +25,6 @@ dist-ssr
 
 # Astro build output
 .astro/
+
+# obsidian
+.obsidian/

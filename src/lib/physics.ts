@@ -17,11 +17,12 @@ type ViewportState = {
 // -----------------------------------------------------------------------------
 
 const SCALE = 5;
-const DENSITY = 0.00001; 
+const DENSITY = 0.00001;
 const MOUSE_MAX_FORCE = 1e4;
 
 const FIXED_TIME_STEP = 1 / 60;
 const MAX_SUB_STEPS = 10;
+const MAX_FRAME_TIME = FIXED_TIME_STEP * MAX_SUB_STEPS;
 
 const SETTLE_MAX_STEPS = 2000;
 const SETTLE_TIME_STEP = 1 / 30;
@@ -49,13 +50,9 @@ world.sleepMode = p2.World.BODY_SLEEPING;
 const borderMaterial = new p2.Material();
 const boxMaterial = new p2.Material();
 
-world.addContactMaterial(
-  new p2.ContactMaterial(borderMaterial, boxMaterial, { friction: 0.2 }),
-);
+world.addContactMaterial(new p2.ContactMaterial(borderMaterial, boxMaterial, { friction: 0.2 }));
 
-world.addContactMaterial(
-  new p2.ContactMaterial(boxMaterial, boxMaterial, { friction: 0.5 }),
-);
+world.addContactMaterial(new p2.ContactMaterial(boxMaterial, boxMaterial, { friction: 0.5 }));
 
 // -----------------------------------------------------------------------------
 // Audio
@@ -195,10 +192,7 @@ function mouseToWorld(clientX: number, clientY: number): [number, number] {
   return [monitorOffset.x + clientX / SCALE, monitorOffset.y - clientY / SCALE];
 }
 
-function getLocalPoint(
-  body: p2.Body,
-  worldPoint: [number, number],
-): [number, number] {
+function getLocalPoint(body: p2.Body, worldPoint: [number, number]): [number, number] {
   const local: [number, number] = [0, 0];
   p2.vec2.toLocalFrame(local, worldPoint, body.position, body.angle);
   return local;
@@ -311,6 +305,14 @@ function onTouchMove(event: TouchEvent) {
   }
 
   event.preventDefault();
+}
+
+function onVisibilityChange() {
+  resetSimulationClock();
+}
+
+function onPageShow() {
+  resetSimulationClock();
 }
 
 // -----------------------------------------------------------------------------
@@ -464,15 +466,10 @@ function updateDynamicTransforms() {
 // -----------------------------------------------------------------------------
 
 function allDynamicBodiesSleeping() {
-  return dynamicBodies.every(
-    ({ body }) => body.sleepState === p2.Body.SLEEPING,
-  );
+  return dynamicBodies.every(({ body }) => body.sleepState === p2.Body.SLEEPING);
 }
 
-function settleWorld(
-  maxSteps = SETTLE_MAX_STEPS,
-  dt = SETTLE_TIME_STEP,
-) {
+function settleWorld(maxSteps = SETTLE_MAX_STEPS, dt = SETTLE_TIME_STEP) {
   syncKinematicBodies();
   for (let i = 0; i < maxSteps; i++) {
     world.step(dt);
@@ -501,6 +498,10 @@ function settleWorld(
 let lastTime = 0;
 let rafId = 0;
 
+function resetSimulationClock() {
+  lastTime = performance.now();
+}
+
 function animate(time: number) {
   rafId = requestAnimationFrame(animate);
 
@@ -512,7 +513,8 @@ function animate(time: number) {
   syncViewportState();
   syncKinematicBodies();
 
-  const dt = lastTime ? (time - lastTime) / 1000 : 0;
+  const elapsed = lastTime ? (time - lastTime) / 1000 : 0;
+  const dt = Math.min(Math.max(elapsed, 0), MAX_FRAME_TIME);
   world.step(FIXED_TIME_STEP, dt, MAX_SUB_STEPS);
 
   updateDynamicTransforms();
@@ -532,6 +534,8 @@ function addEventListeners() {
   addEventListener("touchstart", onTouchStart, { passive: false });
   addEventListener("touchend", onTouchEnd);
   addEventListener("touchmove", onTouchMove, { passive: false });
+  document.addEventListener("visibilitychange", onVisibilityChange);
+  addEventListener("pageshow", onPageShow);
 }
 
 function removeEventListeners() {
@@ -541,6 +545,8 @@ function removeEventListeners() {
   removeEventListener("touchstart", onTouchStart);
   removeEventListener("touchend", onTouchEnd);
   removeEventListener("touchmove", onTouchMove);
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+  removeEventListener("pageshow", onPageShow);
 }
 
 export function init() {
@@ -562,7 +568,7 @@ export function init() {
   settleWorld();
   isSettling = false;
 
-  lastTime = performance.now();
+  resetSimulationClock();
   rafId = requestAnimationFrame(animate);
 }
 

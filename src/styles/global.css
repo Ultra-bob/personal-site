@@ -9,7 +9,8 @@ html.theme-transition > * {
   transition-timing-function: ease-in-out;
 }
 
-a:hover, .link:hover {
+a:hover,
+.link:hover {
   color: var(--text-primary);
   text-decoration: underline;
 

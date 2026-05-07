@@ -1,46 +1,51 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    --text-primary: var(--color-black);
-    --text-secondary: var(--color-gray-700);
-    --text-tertiary: var(--color-gray-500);
-    --text-accent: var(--color-blue-500);
-    --bg-primary: var(--color-white);
-    --bg-secondary: var(--color-gray-400);
+  --text-primary: var(--color-black);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-500);
+  --text-accent: var(--color-blue-500);
+  --bg-primary: var(--color-white);
+  --bg-secondary: var(--color-gray-400);
 }
 
 :root.dark {
-    --text-primary: var(--color-white);
-    --text-secondary: var(--color-gray-300);
-    --text-tertiary: var(--color-gray-500);
-    --bg-primary: var(--color-zinc-900);
-    --bg-secondary: var(--color-zinc-700);
+  --text-primary: var(--color-white);
+  --text-secondary: var(--color-gray-300);
+  --text-tertiary: var(--color-gray-500);
+  --bg-primary: var(--color-zinc-900);
+  --bg-secondary: var(--color-zinc-700);
 }
 
 .text-primary {
-    color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .text-secondary {
-    color: var(--text-secondary);
+  color: var(--text-secondary);
 }
 
 .text-tertiary {
-    color: var(--text-tertiary);
+  color: var(--text-tertiary);
 }
 
 .bg-primary {
-    background-color: var(--bg-primary);
+  background-color: var(--bg-primary);
 }
 
 .bg-secondary {
-    background-color: var(--bg-secondary);
+  background-color: var(--bg-secondary);
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: var(--text-primary);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary);
 }
 
 p {
-    color: var(--text-primary);
+  color: var(--text-primary);
 }

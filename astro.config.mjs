@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import { visualizer } from "rollup-plugin-visualizer";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
@@ -10,11 +10,13 @@ export default defineConfig({
   vite: {
     plugins: [
       ...(visualize
-        ? [visualizer({
-            emitFile: true,
-            filename: "stats.html",
-            template: "sunburst",
-          })]
+        ? [
+            visualizer({
+              emitFile: true,
+              filename: "stats.html",
+              template: "sunburst",
+            }),
+          ]
         : []),
       tailwindcss(),
     ],

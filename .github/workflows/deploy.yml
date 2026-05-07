@@ -2,9 +2,9 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -35,8 +35,8 @@ jobs:
         uses: https://github.com/stefh/ghaction-CompressFiles@v2
         with:
           path: dist/
-          extensions: '.js,.css,.html'
-          tools: 'brotli,gzip'
+          extensions: ".js,.css,.html"
+          tools: "brotli,gzip"
 
       - name: Deploy with rsync
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
