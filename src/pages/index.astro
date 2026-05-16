@@ -5,54 +5,54 @@ import PhysicsLoader from "@components/physics_loader.astro";
 ---
 
 <Main>
-  <Fragment slot="head">
-    <PhysicsLoader />
-  </Fragment>
-  <h1 class="text-2xl mb-4 max-sm:text-xl">Welcome to my site!</h1>
-  <p class="max-sm:text-sm">
-    While you're here, you can explore my guestbook, read my latest blog posts
-    or check out my projects.
-  </p>
-  <h2 class="text-xl mt-8 mb-4 max-sm:text-lg max-sm:mt-4">Projects</h2>
-  <Project
-    title="Locksmith"
-    description="An automatic stacked cipher decoder, written with Rust and Leptos"
-    link="https://locksmith.ultrablob.me"
-    codeLink="https://code.ultrablob.me/ultrablob/locksmith"
-  />
-  <Project
-    title="Habit Tracker"
-    description="A full-stack habit tracker supporting measurable and enum habits"
-    codeLink="https://code.ultrablob.me/ultrablob/habit-tracker"
-  />
-  <Project
-    title="ape-ame"
-    description="A wave survival bullet hell game built with Godot"
-    link="https://ape-ame.ultrablob.me"
-    codeLink="https://code.ultrablob.me/ultrablob/ape-ame"
-  />
-  <Project
-    title="gork"
-    description="An 8-ball discord bot written in Rust with Serenity"
-    codeLink="https://code.ultrablob.me/ultrablob/gork"
-  />
+    <Fragment slot="head">
+        <PhysicsLoader />
+    </Fragment>
+    <h1 class="text-2xl mb-4 max-sm:text-xl">Welcome to my site!</h1>
+    <p class="max-sm:text-sm">
+        While you're here, you can explore my guestbook, read my latest blog
+        posts or check out my projects.
+    </p>
+    <h2 class="text-xl mt-8 mb-4 max-sm:text-lg max-sm:mt-4">Projects</h2>
+    <Project
+        title="Locksmith"
+        description="An automatic stacked cipher decoder, written with Rust and Leptos"
+        link="https://locksmith.ultrablob.me"
+        codeLink="https://code.ultrablob.me/ultrablob/locksmith"
+    />
+    <Project
+        title="Manifest"
+        description="A smart tag-based packing list"
+        codeLink="https://code.ultrablob.me/ultrablob/manifest"
+    />
+    <Project
+        title="ape-ame"
+        description="A wave survival bullet hell game built with Godot"
+        link="https://ape-ame.ultrablob.me"
+        codeLink="https://code.ultrablob.me/ultrablob/ape-ame"
+    />
+    <Project
+        title="gork"
+        description="An 8-ball discord bot written in Rust with Serenity"
+        codeLink="https://code.ultrablob.me/ultrablob/gork"
+    />
 </Main>
 
 <style is:inline>
-  .box {
-    padding: 0.75rem;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    border: 2px solid var(--text-secondary);
-    margin: 1px; /* Very small margin to improve visual separation */
-    user-select: none;
-    cursor: grab;
-    touch-action: none;
-    will-change: transform;
-    visibility: hidden; /* Hidden until settled */
-  }
+    .box {
+        padding: 0.75rem;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        border: 2px solid var(--text-secondary);
+        margin: 1px; /* Very small margin to improve visual separation */
+        user-select: none;
+        cursor: grab;
+        touch-action: none;
+        will-change: transform;
+        visibility: hidden; /* Hidden until settled */
+    }
 
-  footer {
-    padding-top: 1px !important;
-  }
+    footer {
+        padding-top: 1px !important;
+    }
 </style>
