@@ -1,0 +1,14 @@
+.git
+.astro
+.codex
+.agents
+.aws
+.env
+.env.*
+node_modules
+dist
+dist-ssr
+stats.html
+*.log
+.obsidian
+.vscode

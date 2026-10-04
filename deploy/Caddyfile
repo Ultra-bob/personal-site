@@ -1,0 +1,17 @@
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	root * /srv
+
+	# Preserve the build's maximum-quality compressed bytes through the CDN.
+	header Cache-Control "no-transform"
+
+	try_files {path} {path}.html {path}/index.html {path}/index.htm {path}/
+	file_server {
+		index index.html index.htm
+		precompressed br gzip
+	}
+}
