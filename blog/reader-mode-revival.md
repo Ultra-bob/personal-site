@@ -7,9 +7,10 @@ pubDate: 2026-10-10
 Recently, there's been a lot of discussion about optimizing sites so AI agents can easily read and access their content ([is-agentic.com](https://is-agentic.com/)). Since markdown is the language of agents now, one big way to do that is serving plain Markdown files instead of HTML on request ([acceptmarkdown.com](https://acceptmarkdown.com/)). Agents (or humans...) can set the HTTP header `Accept: text/markdown`, and supported sites will return a markdown verison of the page.
 
 For example, on [Mintlify](https://www.mintlify.com/)'s [quickstart page](https://www.mintlify.com/docs/quickstart), setting `Accept: text/markdown` yields a clean markdown version of the page content:
-```md
 
+```md
 > ## Documentation Index
+>
 > Fetch the complete documentation index at: https://www.mintlify.com/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
@@ -20,22 +21,23 @@ For example, on [Mintlify](https://www.mintlify.com/)'s [quickstart page](https:
 After you complete this guide, you'll have a live documentation site ready to customize and update.
 
 ## Set up Mintlify for the user
+
 [...]
 ```
 
-But, what this really means, is that you can set this one HTTP header, and some sites will hand you a their page content, with all the tracking, ads and formatting removed, with some lightweight formatting. What more could you ask for when using reader mode? 
+But, what this really means is that you can set this one HTTP header, and some sites will hand you a their page content, without any ads, tracking or extra content. What more could you ask for when using reader mode?
 
-acceptmarkdown.com literally spells it out on their hero page:
+[acceptmarkdown.com](https://acceptmarkdown.com) literally spells it out on their hero page:
+
 > **Higher signal-to-noise.**
-> 
+>
 > No ads, related-content rails, or modal overlays muddying the text a RAG pipeline has to embed.
 
-Replace "RAG pipeline" with "human eyeball", and you can see why it's so attractive. Just make a browser extension that sets the appropriate header, and then renders the markdown instead of HTML if possible, and you can see a lot of articles (especially technical ones) rendered with fonts, text sizes and colors rendered to your preference, and no huge HTML/JS payloads. I could even see a whole markdown based browser being possible as this gains momentum.
+Replace "RAG pipeline" with "human eyeball", and you can see why it's so attractive. Just make a browser extension that sets the appropriate header, and then renders markdown instead of HTML if possible, and you could see a lot of articles (especially technical ones) rendered with fonts, text sizes and colors rendered to your preference, without huge HTML/JS payloads. I could even see a whole markdown based browser being possible if adoption increases.
 
 Of course, because the markdown spec is so loose, there will be some formatting quirks. The mintlify example from earlier has some weird HTML style markup:
 
 ```md
-
 Your documentation site is now deployed at `https://<your-project-name>.mintlify.site`.
 
 Find your exact URL on the **Overview** page of your [dashboard](https://app.mintlify.com/).
@@ -53,4 +55,4 @@ It's still a lot better than the raw HTML, and hopefully over time things will b
 
 Overall, this feels like part of a bigger trend i've noticed that open formats (markdown, HTML) have been much more agent-ready than closed ecosystems (Notion). As a result of this, companies that used to hold your data hostage have scrambled to open it up, not for humans, but agents via MCP servers and the like. However, I think this openness benefits everyone, although it's ironic that AI made open data a priority.
 
-*side note: this seems like a pretty original idea, the only other discussion i've found is [this tweet](https://x.com/rajadain/status/2022070909071475098)*
+_side note: this idea about reader mode seems pretty original, the only other discussion i've found is [this tweet](https://x.com/rajadain/status/2022070909071475098)_
