@@ -6,6 +6,10 @@ type BodyBinding = {
   el: HTMLElement;
 };
 
+type DynamicBodyBinding = BodyBinding & {
+  style: CSSStyleDeclaration;
+};
+
 type ViewportState = {
   x: number;
   y: number;
@@ -109,8 +113,11 @@ function syncViewportState() {
 
   if (!changed) return;
 
+  const resized = next.w !== viewportState.w || next.h !== viewportState.h;
   viewportState = next;
   applyViewportState();
+
+  if (resized) syncDynamicBodies();
 
   for (const body of world.bodies) {
     body.wakeUp();
@@ -156,6 +163,7 @@ world.addBody(mouseBody);
 
 let mouseConstraint: p2.RevoluteConstraint | null = null;
 let grabbedElement: HTMLElement | null = null;
+let grabOwner: "mouse" | "touch" | null = null;
 
 function mouseToWorld(clientX: number, clientY: number): [number, number] {
   return [monitorOffset.x + clientX / SCALE, monitorOffset.y - clientY / SCALE];
@@ -168,6 +176,10 @@ function getLocalPoint(body: p2.Body, worldPoint: [number, number]): [number, nu
 }
 
 function grabBody(clientX: number, clientY: number): boolean {
+  if (mouseConstraint) {
+    releaseBody();
+  }
+
   const worldPos = mouseToWorld(clientX, clientY);
   mouseBody.position[0] = worldPos[0];
   mouseBody.position[1] = worldPos[1];
@@ -207,12 +219,14 @@ function releaseBody() {
   }
   document.body.style.cursor = "default";
 
-  if (!mouseConstraint) return;
-
-  mouseConstraint.bodyB.wakeUp();
-  mouseConstraint.bodyB.allowSleep = true;
-  world.removeConstraint(mouseConstraint);
+  if (mouseConstraint) {
+    mouseConstraint.bodyB.wakeUp();
+    mouseConstraint.bodyB.allowSleep = true;
+    world.removeConstraint(mouseConstraint);
+  }
   mouseConstraint = null;
+  grabOwner = null;
+  activeTouchId = null;
 }
 
 function movePointer(clientX: number, clientY: number) {
@@ -222,52 +236,74 @@ function movePointer(clientX: number, clientY: number) {
 }
 
 function onMouseDown(event: MouseEvent) {
-  if (event.button !== 0) return;
+  if (event.button !== 0 || activeTouchId !== null || grabOwner === "touch") return;
   collisionAudio.unlock();
-  grabBody(event.clientX, event.clientY);
+  if (grabBody(event.clientX, event.clientY)) {
+    grabOwner = "mouse";
+  }
 }
 
-function onMouseUp(_event: MouseEvent) {
-  releaseBody();
+function onMouseUp(event: MouseEvent) {
+  if (event.button !== 0) return;
+  if (grabOwner === "mouse" && !(event.buttons & 1)) {
+    releaseBody();
+  }
 }
 
 function onMouseMove(event: MouseEvent) {
+  if (activeTouchId !== null || grabOwner === "touch") return;
+  if (grabOwner === "mouse" && mouseConstraint && !(event.buttons & 1)) {
+    releaseBody();
+  }
   movePointer(event.clientX, event.clientY);
 }
 
 const DRAG_THRESHOLD = 10;
 let touchStartX = 0;
 let touchStartY = 0;
-let touchDragging = false;
+let activeTouchId: number | null = null;
+
+function findTouch(event: TouchEvent, id: number | null): Touch | undefined {
+  if (id === null) return undefined;
+  for (let i = 0; i < event.touches.length; i++) {
+    if (event.touches[i].identifier === id) return event.touches[i];
+  }
+  return undefined;
+}
 
 function onTouchStart(event: TouchEvent) {
+  if (activeTouchId !== null || grabOwner === "mouse") return;
   const touch = event.touches[0];
   if (!touch) return;
+  activeTouchId = touch.identifier;
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
-  touchDragging = false;
   collisionAudio.unlock();
   movePointer(touch.clientX, touch.clientY);
 }
 
-function onTouchEnd(_event: TouchEvent) {
-  if (touchDragging) {
-    releaseBody();
-  }
-  touchDragging = false;
+function onTouchEnd(event: TouchEvent) {
+  const released = Array.from(event.changedTouches).some((t) => t.identifier === activeTouchId);
+  if (!released) return;
+
+  releaseBody();
 }
 
 function onTouchMove(event: TouchEvent) {
-  const touch = event.touches[0];
-  if (!touch) return;
+  if (activeTouchId === null || grabOwner === "mouse") return;
+  const touch = findTouch(event, activeTouchId);
+  if (!touch) {
+    releaseBody();
+    return;
+  }
   movePointer(touch.clientX, touch.clientY);
 
-  if (!touchDragging) {
+  if (grabOwner !== "touch") {
     const dx = touch.clientX - touchStartX;
     const dy = touch.clientY - touchStartY;
     if (dx * dx + dy * dy < DRAG_THRESHOLD * DRAG_THRESHOLD) return;
     if (grabBody(touchStartX, touchStartY)) {
-      touchDragging = true;
+      grabOwner = "touch";
       event.preventDefault();
     }
     return;
@@ -277,6 +313,9 @@ function onTouchMove(event: TouchEvent) {
 }
 
 function onVisibilityChange() {
+  if (document.hidden) {
+    releaseBody();
+  }
   resetSimulationClock();
 }
 
@@ -284,13 +323,34 @@ function onPageShow() {
   resetSimulationClock();
 }
 
+function onWindowBlur() {
+  releaseBody();
+}
+
+function onPointerCancel(event: PointerEvent) {
+  // Pen input also produces the mouse events used to grab bodies. Touch
+  // cancellation is matched to the active touch separately.
+  if (grabOwner !== "mouse" || event.pointerType === "touch") return;
+  releaseBody();
+}
+
+function onDragEnd() {
+  if (grabOwner === "mouse") releaseBody();
+}
+
 // -----------------------------------------------------------------------------
 // Body bindings
 // -----------------------------------------------------------------------------
 
-const dynamicBodies: BodyBinding[] = [];
+const dynamicBodies: DynamicBodyBinding[] = [];
 const kinematicBodies: BodyBinding[] = [];
-let kinematicResizeObserver: ResizeObserver | null = null;
+let layoutResizeObserver: ResizeObserver | null = null;
+
+// Keep simulation overrides in their own sheet, leaving authored inline
+// styles intact. Disabling the sheet restores the complete CSS layout.
+const physicsStyleElement = document.createElement("style");
+document.head.append(physicsStyleElement);
+const physicsStyles = physicsStyleElement.sheet!;
 
 function getElementWorldCenter(rect: DOMRect): [number, number] {
   return [
@@ -299,16 +359,22 @@ function getElementWorldCenter(rect: DOMRect): [number, number] {
   ];
 }
 
-function applyDynamicElementStyles(el: HTMLElement, rect: DOMRect) {
-  el.style.width = rect.width + "px";
-  el.style.height = rect.height + "px";
-
-  el.style.position = "fixed";
-  el.style.top = "0";
-  el.style.left = "0";
-  el.style.margin = "0";
-  el.style.transformOrigin = "50% 50%";
-  el.style.willChange = "transform";
+function createDynamicStyle(el: HTMLElement, rect: DOMRect, bodyId: number) {
+  el.dataset.physicsBody = String(bodyId);
+  const index = physicsStyles.insertRule(`[data-physics-body="${bodyId}"] {}`);
+  const style = (physicsStyles.cssRules[index] as CSSStyleRule).style;
+  style.cssText = `
+    box-sizing: border-box !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    transform-origin: 50% 50% !important;
+    will-change: transform;
+  `;
+  style.setProperty("width", rect.width + "px", "important");
+  style.setProperty("height", rect.height + "px", "important");
+  return style;
 }
 
 function createDynamicBody(el: HTMLElement, rect: DOMRect) {
@@ -333,10 +399,14 @@ function createDynamicBody(el: HTMLElement, rect: DOMRect) {
   body.addShape(new p2.Box({ width, height, material: boxMaterial }));
   world.addBody(body);
 
-  applyDynamicElementStyles(el, rect);
-  dynamicBodies.push({ body, el });
+  const binding = { body, el, style: createDynamicStyle(el, rect, body.id) };
+  dynamicBodies.push(binding);
 
-  updateTransform(body, el);
+  if (layoutResizeObserver) {
+    layoutResizeObserver.observe(el);
+  }
+
+  updateTransform(binding);
 }
 
 function createKinematicBody(el: HTMLElement, rect: DOMRect) {
@@ -351,17 +421,16 @@ function createKinematicBody(el: HTMLElement, rect: DOMRect) {
   body.addShape(new p2.Box({ width, height, material: boxMaterial }));
   world.addBody(body);
 
-  if (kinematicResizeObserver) {
-    kinematicResizeObserver.observe(el);
+  if (layoutResizeObserver) {
+    layoutResizeObserver.observe(el);
   }
 
   kinematicBodies.push({ body, el });
 }
 
-function syncKinematicBody(binding: BodyBinding) {
+function syncKinematicBody(binding: BodyBinding): boolean {
   const { body, el } = binding;
   const rect = el.getBoundingClientRect();
-  const shape = body.shapes[0] as p2.Box;
 
   const [x, y] = getElementWorldCenter(rect);
   const width = rect.width / SCALE;
@@ -370,16 +439,67 @@ function syncKinematicBody(binding: BodyBinding) {
   body.position[0] = x;
   body.position[1] = y;
 
-  if (shape.width !== width || shape.height !== height) {
-    shape.width = width;
-    shape.height = height;
-    body.updateAABB();
-  }
+  const shape = body.shapes[0] as p2.Box;
+  if (shape.width === width && shape.height === height) return false;
+
+  body.removeShape(shape);
+  body.addShape(new p2.Box({ width, height, material: boxMaterial }));
+  body.updateAABB();
+  return true;
+}
+
+function wakeBodies() {
+  for (const { body } of dynamicBodies) body.wakeUp();
+  for (const { body } of kinematicBodies) body.wakeUp();
 }
 
 function syncKinematicBodies() {
+  let changedAny = false;
   for (const binding of kinematicBodies) {
-    syncKinematicBody(binding);
+    if (syncKinematicBody(binding)) changedAny = true;
+  }
+  if (changedAny) {
+    wakeBodies();
+  }
+}
+
+function syncDynamicBodies() {
+  if (dynamicBodies.length === 0) return;
+
+  // Let the browser resolve the authored layout, with all siblings present,
+  // before pinning the new border-box sizes for the simulation.
+  let rects: DOMRect[];
+  physicsStyles.disabled = true;
+  try {
+    rects = dynamicBodies.map(({ el }) => el.getBoundingClientRect());
+  } finally {
+    physicsStyles.disabled = false;
+  }
+
+  let changedAny = false;
+
+  dynamicBodies.forEach((binding, index) => {
+    const rect = rects[index];
+
+    binding.style.setProperty("width", rect.width + "px", "important");
+    binding.style.setProperty("height", rect.height + "px", "important");
+
+    const width = rect.width / SCALE;
+    const height = rect.height / SCALE;
+
+    const shape = binding.body.shapes[0] as p2.Box;
+    if (shape.width !== width || shape.height !== height) {
+      binding.body.removeShape(shape);
+      binding.body.mass = rect.width * rect.height * DENSITY;
+      binding.body.addShape(new p2.Box({ width, height, material: boxMaterial }));
+      binding.body.updateAABB();
+      changedAny = true;
+    }
+  });
+
+  if (changedAny) {
+    wakeBodies();
+    updateDynamicTransforms();
   }
 }
 
@@ -398,13 +518,28 @@ function createBodies() {
       createDynamicBody(el, rect);
     }
   }
+
+  // Observe layout containers as well, so container-only sizing changes
+  // (collapsible panels, container queries, parent width changes, etc.)
+  // trigger a geometry sync.
+  const observedContainers = new Set<HTMLElement>();
+  for (const { el } of initialLayout) {
+    let parent = el.parentElement;
+    while (parent) {
+      if (!observedContainers.has(parent)) {
+        observedContainers.add(parent);
+        layoutResizeObserver?.observe(parent);
+      }
+      parent = parent.parentElement;
+    }
+  }
 }
 
 // -----------------------------------------------------------------------------
 // Rendering
 // -----------------------------------------------------------------------------
 
-function updateTransform(body: p2.Body, el: HTMLElement) {
+function updateTransform({ body, style }: DynamicBodyBinding) {
   const shape = body.shapes[0] as p2.Box;
 
   const px = body.interpolatedPosition[0];
@@ -418,18 +553,12 @@ function updateTransform(body: p2.Body, el: HTMLElement) {
 
   const transform = `translate(${x}px, ${y}px) rotate(${-body.interpolatedAngle}rad)`;
 
-  el.style.transform = transform;
-  // el.style.borderStyle = [
-  //   "solid",
-  //   "dashed",
-  //   "dotted"
-  // ][body.sleepState]
-  el.style.webkitTransform = `${transform} translateZ(0)`;
+  style.setProperty("transform", transform, "important");
 }
 
 function updateDynamicTransforms() {
-  for (const { body, el } of dynamicBodies) {
-    updateTransform(body, el);
+  for (const binding of dynamicBodies) {
+    updateTransform(binding);
   }
 }
 
@@ -503,30 +632,39 @@ function addEventListeners() {
   addEventListener("mousedown", onMouseDown);
   addEventListener("mouseup", onMouseUp);
   addEventListener("mousemove", onMouseMove);
+  addEventListener("pointercancel", onPointerCancel);
+  addEventListener("dragend", onDragEnd);
   addEventListener("touchstart", onTouchStart, { passive: false });
   addEventListener("touchend", onTouchEnd);
   addEventListener("touchmove", onTouchMove, { passive: false });
+  addEventListener("touchcancel", onTouchEnd);
   document.addEventListener("visibilitychange", onVisibilityChange);
   addEventListener("pageshow", onPageShow);
+  addEventListener("blur", onWindowBlur);
 }
 
 function removeEventListeners() {
   removeEventListener("mousedown", onMouseDown);
   removeEventListener("mouseup", onMouseUp);
   removeEventListener("mousemove", onMouseMove);
+  removeEventListener("pointercancel", onPointerCancel);
+  removeEventListener("dragend", onDragEnd);
   removeEventListener("touchstart", onTouchStart);
   removeEventListener("touchend", onTouchEnd);
   removeEventListener("touchmove", onTouchMove);
+  removeEventListener("touchcancel", onTouchEnd);
   document.removeEventListener("visibilitychange", onVisibilityChange);
   removeEventListener("pageshow", onPageShow);
+  removeEventListener("blur", onWindowBlur);
 }
 
 export function init() {
   if (initialized) return;
   initialized = true;
 
-  kinematicResizeObserver = new ResizeObserver(() => {
+  layoutResizeObserver = new ResizeObserver(() => {
     syncKinematicBodies();
+    syncDynamicBodies();
   });
 
   viewportState = readViewportState();
@@ -550,11 +688,8 @@ export function destroy() {
   removeEventListeners();
   collisionAudio.destroy();
 
-  kinematicResizeObserver?.disconnect();
-  kinematicResizeObserver = null;
+  layoutResizeObserver?.disconnect();
+  layoutResizeObserver = null;
 
-  if (mouseConstraint) {
-    world.removeConstraint(mouseConstraint);
-    mouseConstraint = null;
-  }
+  releaseBody();
 }
