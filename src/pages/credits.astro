@@ -1,0 +1,83 @@
+---
+import Main from "@layouts/main.astro";
+import PhysicsLoader from "@components/physics_loader.astro";
+import Credit from "@components/credit.astro";
+---
+
+<Main>
+    <Fragment slot="head">
+        <PhysicsLoader />
+    </Fragment>
+    <h1 class="text-2xl mb-4 max-sm:text-xl">Credits</h1>
+    <p class="max-sm:text-sm">
+        All<sup class="text-(--text-secondary)">*</sup> code or assets used in
+        this site
+    </p>
+
+    <div class="flex flex-wrap-reverse items-end gap-1">
+        <Credit
+            title="Astro"
+            description="Main web framework"
+            link="https://astro.build/"
+        />
+        <Credit
+            title="p2-es"
+            description="Physics Engine"
+            link="https://p2-es.pmnd.rs/"
+        />
+        <Credit
+            title="Pretext"
+            description="Fast text measurement for justification"
+            link="https://github.com/chenglou/pretext"
+        />
+        <Credit
+            title="Tailwind CSS"
+            description="Styling on most components"
+            link="https://tailwindcss.com/"
+        />
+        <Credit
+            title="Vite"
+            description="Build system"
+            link="https://vite.dev/"
+        />
+        <Credit
+            title="Kenney Sci-fi Sounds Pack"
+            description="Collision sound (impactMetal_001)"
+            link="https://kenney.nl/assets/sci-fi-sounds"
+        />
+        <Credit
+            title="Forgejo"
+            description="Self-hosted git"
+            link="https://forgejo.org/"
+        />
+        <Credit
+            title="Zed"
+            description="Code Editor"
+            link="https://zed.dev/"
+        />
+        <Credit
+            title="pnpm"
+            description="Package manager"
+            link="https://pnpm.io/"
+        />
+    </div>
+</Main>
+
+<style is:inline>
+    .box {
+        padding: 0.75rem;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        border: 2px solid var(--text-secondary);
+        margin: 1px; /* Very small margin to improve visual separation */
+        user-select: none;
+        cursor: grab;
+        touch-action: none;
+        will-change: transform;
+        visibility: hidden; /* Hidden until settled */
+    }
+
+    footer {
+        padding-top: 1px !important;
+    }
+</style>
