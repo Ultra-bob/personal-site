@@ -1,4 +1,5 @@
 import * as p2 from "p2-es";
+import { CollisionAudio, getCollisionImpact } from "./collision-audio";
 
 type BodyBinding = {
   body: p2.Body;
@@ -26,8 +27,6 @@ const MAX_FRAME_TIME = FIXED_TIME_STEP * MAX_SUB_STEPS;
 
 const SETTLE_MAX_STEPS = 2000;
 const SETTLE_TIME_STEP = 1 / 30;
-
-const COLLISION_AUDIO_URL = "/collide.ogg";
 
 // -----------------------------------------------------------------------------
 // World
@@ -58,48 +57,18 @@ world.addContactMaterial(new p2.ContactMaterial(boxMaterial, boxMaterial, { fric
 // Audio
 // -----------------------------------------------------------------------------
 
-const audioCtx = new AudioContext();
-let collisionBuffer: AudioBuffer | null = null;
+const collisionAudio = new CollisionAudio();
 let isSettling = true;
-
-async function initAudio() {
-  try {
-    const resp = await fetch(COLLISION_AUDIO_URL);
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status}`);
-    }
-
-    const arrayBuffer = await resp.arrayBuffer();
-    collisionBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-  } catch (error) {
-    console.error("Failed to load collision audio:", error);
-  }
-}
-
-function playCollisionSound(bodyA: p2.Body, bodyB: p2.Body) {
-  if (audioCtx.state !== "running" || !collisionBuffer) return;
-  if (!bodyA.collisionResponse || !bodyB.collisionResponse) return;
-
-  const relativeSpeed = p2.vec2.distance(bodyA.velocity, bodyB.velocity);
-  const volume = Math.min(1, relativeSpeed / 1000);
-
-  if (volume <= 0.01) return;
-
-  const source = audioCtx.createBufferSource();
-  source.buffer = collisionBuffer;
-
-  const gain = audioCtx.createGain();
-  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-
-  source.connect(gain).connect(audioCtx.destination);
-  source.start();
-}
 
 world.on("beginContact", (evt) => {
   if (isSettling) return;
-  if (!evt.bodyA || !evt.bodyB) return;
-
-  playCollisionSound(evt.bodyA, evt.bodyB);
+  const impact = getCollisionImpact(
+    evt.contactEquations,
+    SCALE,
+    monitorOffset.x,
+    window.innerWidth,
+  );
+  if (impact) collisionAudio.play(impact);
 });
 
 // -----------------------------------------------------------------------------
@@ -254,7 +223,7 @@ function movePointer(clientX: number, clientY: number) {
 
 function onMouseDown(event: MouseEvent) {
   if (event.button !== 0) return;
-  void audioCtx.resume();
+  collisionAudio.unlock();
   grabBody(event.clientX, event.clientY);
 }
 
@@ -277,7 +246,7 @@ function onTouchStart(event: TouchEvent) {
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
   touchDragging = false;
-  void audioCtx.resume();
+  collisionAudio.unlock();
   movePointer(touch.clientX, touch.clientY);
 }
 
@@ -566,8 +535,6 @@ export function init() {
   createBodies();
   addEventListeners();
 
-  void initAudio();
-
   settleWorld();
   isSettling = false;
 
@@ -581,6 +548,7 @@ export function destroy() {
 
   cancelAnimationFrame(rafId);
   removeEventListeners();
+  collisionAudio.destroy();
 
   kinematicResizeObserver?.disconnect();
   kinematicResizeObserver = null;
