@@ -330,7 +330,10 @@ function getElementWorldCenter(rect: DOMRect): [number, number] {
   ];
 }
 
-function applyDynamicElementStyles(el: HTMLElement) {
+function applyDynamicElementStyles(el: HTMLElement, rect: DOMRect) {
+  el.style.width = rect.width + "px";
+  el.style.height = rect.height + "px";
+
   el.style.position = "fixed";
   el.style.top = "0";
   el.style.left = "0";
@@ -339,8 +342,7 @@ function applyDynamicElementStyles(el: HTMLElement) {
   el.style.willChange = "transform";
 }
 
-function createDynamicBody(el: HTMLElement) {
-  const rect = el.getBoundingClientRect();
+function createDynamicBody(el: HTMLElement, rect: DOMRect) {
   const width = rect.width / SCALE;
   const height = rect.height / SCALE;
 
@@ -362,14 +364,13 @@ function createDynamicBody(el: HTMLElement) {
   body.addShape(new p2.Box({ width, height, material: boxMaterial }));
   world.addBody(body);
 
-  applyDynamicElementStyles(el);
+  applyDynamicElementStyles(el, rect);
   dynamicBodies.push({ body, el });
 
   updateTransform(body, el);
 }
 
-function createKinematicBody(el: HTMLElement) {
-  const rect = el.getBoundingClientRect();
+function createKinematicBody(el: HTMLElement, rect: DOMRect) {
   const width = rect.width / SCALE;
   const height = rect.height / SCALE;
 
@@ -418,11 +419,14 @@ function createBodies() {
     document.querySelectorAll<HTMLElement>(".box, .kinematic-box"),
   ).reverse();
 
-  for (const el of elements) {
+  // Capture the layout before fixed positioning removes cards from the flow.
+  const initialLayout = elements.map((el) => ({ el, rect: el.getBoundingClientRect() }));
+
+  for (const { el, rect } of initialLayout) {
     if (el.classList.contains("kinematic-box")) {
-      createKinematicBody(el);
+      createKinematicBody(el, rect);
     } else {
-      createDynamicBody(el);
+      createDynamicBody(el, rect);
     }
   }
 }

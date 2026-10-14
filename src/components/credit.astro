@@ -1,0 +1,13 @@
+---
+import Project from "@components/project.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  link: string;
+}
+
+const { title, description, link } = Astro.props;
+---
+
+<Project title={title} description={description} link={link} />
