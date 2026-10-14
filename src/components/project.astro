@@ -2,6 +2,13 @@
 import LinkExternal from "@assets/link-external.svg";
 import Code from "@assets/source-code.svg";
 
+interface Props {
+  title: string;
+  description: string;
+  link?: string;
+  codeLink?: string;
+}
+
 const { title, description, link, codeLink } = Astro.props;
 ---
 

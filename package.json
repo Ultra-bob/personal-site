@@ -9,9 +9,11 @@
     "preview": "astro preview",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "check": "astro check",
     "format": "oxfmt"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.10",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
     "@chenglou/pretext": "^0.0.5",
@@ -25,7 +27,8 @@
     "p2-es": "^1.2.3",
     "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^4.2.2",
-    "tex-linebreak": "^0.8.1"
+    "tex-linebreak": "^0.8.1",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "oxfmt": "^0.48.0",
